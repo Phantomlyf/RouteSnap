@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skymmer.mapper.TravelMapper">
+
+
+    <insert id="insert" parameterType="com.skymmer.pojo.Travel">
+        insert into TB_TRAVEL(IMAGE_PATH, LATITUDE, LONGITUDE, TAKEN_TIME, LOCATION, CONTENT, MAKE, MODEL, TYPE, WIDTH, HEIGHT, FNUMBER, EXPOSURE_TIME, ISO)
+        values (#{imagePath},#{latitude},#{longitude},#{takenTime},#{location},#{content},#{make},#{model},#{type},#{width},#{height},#{fnumber},#{exposureTime},#{iso})
+    </insert>
+
+
+    <select id="select" resultType="com.skymmer.pojo.Travel">
+        select * from TB_TRAVEL
+        <where>
+            <if test="start != null and end != null">
+                TAKEN_TIME between #{start} and #{end}
+            </if>
+            <if test="location != null">
+                and LOCATION like concat('%', #{location}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="genTra" resultType="com.skymmer.pojo.GpsInfo">
+        select LATITUDE, LONGITUDE from TB_TRAVEL
+        <where>
+            <if test="start != null">
+                TAKEN_TIME &gt;= #{start}
+            </if>
+            <if test="end != null">
+                AND TAKEN_TIME &lt;= #{end}
+            </if>
+        </where>
+        ORDER BY TAKEN_TIME ASC
+    </select>
+
+
+
+</mapper>

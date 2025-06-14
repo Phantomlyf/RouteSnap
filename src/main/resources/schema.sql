@@ -1,0 +1,23 @@
+create table TB_TRAVEL
+(
+    ID            INTEGER               not null
+        primary key,
+    IMAGE_PATH    CHARACTER VARYING(20) not null,
+    LATITUDE      DOUBLE PRECISION,
+    LONGITUDE     DOUBLE PRECISION,
+    TAKEN_TIME    TIMESTAMP,
+    LOCATION      CHARACTER VARYING(30),
+    CONTENT       CHARACTER VARYING(1000000000),
+    MAKE          CHARACTER VARYING(10),
+    MODEL         CHARACTER VARYING(10),
+    TYPE          CHARACTER VARYING(10),
+    WIDTH         CHARACTER VARYING(10),
+    HEIGHT        CHARACTER VARYING(10),
+    FNUMBER       CHARACTER VARYING(5),
+    EXPOSURE_TIME CHARACTER VARYING(5),
+    ISO           CHARACTER VARYING(5)
+);
+
+comment on column TB_TRAVEL.ID is '唯一主键';
+
+comment on column TB_TRAVEL.IMAGE_PATH is '图片本地地址';
