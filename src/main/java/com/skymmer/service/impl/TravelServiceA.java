@@ -30,7 +30,7 @@ public class TravelServiceA implements TravelService {
     @Autowired
     ImageThumbnailGenerator imageThumbnailGenerator;
     @Override
-    public void upload(MultipartFile file,String location,String content) {
+    public int upload(MultipartFile file,String location,String content) {
         try {
             //1.将图片存储到本地，获得本地地址
             String imagePath = imageStorageUtils.StorageImage(file);
@@ -52,17 +52,30 @@ public class TravelServiceA implements TravelService {
             //4.存入数据
             Travel travel = new Travel(imagePath,content,latitude,longitude, takenTime, location, make, model, type, width, height, fnumber, exposureTime, iso);
             travelMapper.insert(travel);
+            //返回插入游记的id
+            return travel.getId();
         } catch (Exception e) {
             System.out.println(e);
             System.out.println("游记存储服务层出错");
+            return 0;
         }
     }
+    @Override
+    public List<Integer> listId(){
+        List<Integer> ids = travelMapper.selectIds();
+        return ids;
+    }
 
+    @Override
+    public Travel getById(Integer id){
+        Travel travel =  travelMapper.selectById(id);
+        return travel;
+    }
     @Override
     public List<Travel> selectTravel(LocalDateTime startTime, LocalDateTime endTime, String location) {
         Timestamp start = Timestamp.valueOf(startTime);
         Timestamp end = Timestamp.valueOf(endTime);
-        List<Travel> selectedTravels = travelMapper.select(start, end, location);
+        List<Travel> selectedTravels = travelMapper.selectByCase(start, end, location);
         return  selectedTravels;
     }
 

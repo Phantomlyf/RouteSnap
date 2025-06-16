@@ -16,19 +16,46 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+@RequestMapping("/travel")
 public class TravelController {
 
     @Autowired
     TravelService travelService;
-    @PostMapping("/upload/travel")
+    @PostMapping("/upload")
     public Result uploadTravel(@RequestParam MultipartFile file,@RequestParam String location, @RequestParam String content){
-        travelService.upload(file,location,content);
+        int id = travelService.upload(file,location,content);
+        if(id>0){
+            return Result.success(id);
+        }
+        else{
+            return  Result.error(1101,"游记上传失败");
+        }
 
-        return Result.success();
+
+    }
+    @GetMapping("/listId")
+    public Result listId(){
+        List<Integer> ids = travelService.listId();
+        if(ids != null){
+            return Result.success(ids);
+        }
+        else{
+            return Result.error(1102,"所有游记id获取失败");
+        }
     }
 
+    @GetMapping("/{id}")
+    public Result getById(@PathVariable("id") Integer id){
+        Travel travel= travelService.getById(id);
+        if(travel != null){
+            return Result.success(travel);
+        }
+        else{
+            return Result.error(1103,"游记id信息不正确或数据库损坏");
+        }
+    }
 
-    @GetMapping("list")
+    @GetMapping("listBycase")
     public Result selectTravel(@RequestParam(required=false) String startTime,
                                @RequestParam(required=false) String endTime,
                                @RequestParam(required=false) String location){

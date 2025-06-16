@@ -1,5 +1,6 @@
 package com.skymmer.controller;
 
+import com.skymmer.pojo.ImageInfo;
 import com.skymmer.pojo.Result;
 import com.skymmer.pojo.Travel;
 import com.skymmer.utils.ImageStorageProperties;
@@ -27,9 +28,9 @@ public class ImageController {
         }
         try (InputStream inputStream = file.getInputStream()) {
             MetaUtils.init(inputStream);
-            Timestamp takenTime = MetaUtils.getDateTimeInfo();
             Double latitude = MetaUtils.getLatitude();
             Double longitude = MetaUtils.getLongitude();
+            Timestamp takenTime = MetaUtils.getDateTimeInfo();
             String make = MetaUtils.getMakeInfo();
             String model = MetaUtils.getModelInfo();
             String type = MetaUtils.getTypeInfo();
@@ -38,8 +39,9 @@ public class ImageController {
             String fnumber = MetaUtils.getFnumberInfo();
             String exposureTime = MetaUtils.getExposureTimeInfo();
             String iso = MetaUtils.getISOInfo();
-            Travel travel = new Travel(latitude, longitude, takenTime, make, model, type, width, height, fnumber, exposureTime, iso);
-            return  Result.success(travel);
+
+            ImageInfo imageInfo = new ImageInfo(latitude, longitude, takenTime, make, model, type, width, height, fnumber, exposureTime, iso);
+            return Result.success(imageInfo);
         }
     }
 }

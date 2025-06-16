@@ -1,8 +1,9 @@
-create table TB_TRAVEL
+-- auto-generated definition
+create table if not exists TB_TRAVEL
 (
-    ID            INTEGER               not null
+    ID            INTEGER auto_increment
         primary key,
-    IMAGE_PATH    CHARACTER VARYING(20) not null,
+    IMAGE_PATH    CHARACTER VARYING(100) not null,
     LATITUDE      DOUBLE PRECISION,
     LONGITUDE     DOUBLE PRECISION,
     TAKEN_TIME    TIMESTAMP,
@@ -17,6 +18,8 @@ create table TB_TRAVEL
     EXPOSURE_TIME CHARACTER VARYING(5),
     ISO           CHARACTER VARYING(5)
 );
+
+
 
 comment on column TB_TRAVEL.ID is '唯一主键';
 

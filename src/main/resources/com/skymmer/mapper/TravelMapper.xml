@@ -5,13 +5,20 @@
 <mapper namespace="com.skymmer.mapper.TravelMapper">
 
 
-    <insert id="insert" parameterType="com.skymmer.pojo.Travel">
+    <insert id="insert" parameterType="com.skymmer.pojo.Travel" keyProperty = "id" useGeneratedKeys = "true">
         insert into TB_TRAVEL(IMAGE_PATH, LATITUDE, LONGITUDE, TAKEN_TIME, LOCATION, CONTENT, MAKE, MODEL, TYPE, WIDTH, HEIGHT, FNUMBER, EXPOSURE_TIME, ISO)
         values (#{imagePath},#{latitude},#{longitude},#{takenTime},#{location},#{content},#{make},#{model},#{type},#{width},#{height},#{fnumber},#{exposureTime},#{iso})
     </insert>
 
+    <select id="selectIds" resultType="integer">
+        select ID from TB_TRAVEL
+    </select>
 
-    <select id="select" resultType="com.skymmer.pojo.Travel">
+    <select id="selectById"  parameterType="integer"  resultType="com.skymmer.pojo.Travel">
+        select * from TB_TRAVEL where ID = #{id}
+    </select>
+
+    <select id="selectByCase" resultType="com.skymmer.pojo.Travel">
         select * from TB_TRAVEL
         <where>
             <if test="start != null and end != null">

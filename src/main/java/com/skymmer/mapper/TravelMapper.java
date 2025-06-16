@@ -19,10 +19,13 @@ public interface TravelMapper {
     @Options(keyProperty = "id", useGeneratedKeys = true)
     int insert(Travel travel);
 
-    List<Travel> select(@Param("start") Timestamp start,
+    List<Integer> selectIds();
+
+    List<Travel> selectByCase(@Param("start") Timestamp start,
                         @Param("end") Timestamp end,
                         @Param("location") String location);
 
+    Travel selectById(@Param("id") Integer id);
     List<GpsInfo> genTra(@Param("start") Timestamp start,
                          @Param("end") Timestamp end);
     @Select("select * from TB_TRAVEL")
