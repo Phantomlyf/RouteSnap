@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>index</title>
+        <link rel="stylesheet" href="./index.css">
+        <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' https://*.amap.com http://*.autonavi.com;
+        script-src 'self' https://*.amap.com 'unsafe-inline' 'unsafe-eval' blob:;
+        style-src 'self' https://*.amap.com 'unsafe-inline';
+        img-src * data: blob:;
+        connect-src *;
+        font-src *;
+        ">
+        <link rel="stylesheet" type="text/css" href="./map-show.css">
+        <link rel="stylesheet" type="text/css" href="./bar.css">
+        <link rel="stylesheet" type="text/css" href="./work-edit.css">
+        <script type="text/javascript">
+            window._AMapSecurityConfig = {
+                securityJsCode: "d2a5e39f22600e87ecb82b4933dc847a",
+            };
+        </script>
+    </head>
+
+    <body>
+        <div id="background">
+            <div class="leftWindows">
+                <div id="mapBack"></div>
+                <div id="map"></div>
+            </div>
+            <div class="leftWindows">
+                <div class="hidden" id="workList">
+                    <div id="listSearch">
+                        <select id="year1"></select>
+                        <select id="month1"></select>
+                        <select id="day1"></select>
+                        
+                        <select id="year2"></select>
+                        <select id="month2"></select>
+                        <select id="day2"></select>
+                    </div>
+                    <div id="table-container">
+                        <table id="worktable">
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>地点</th>
+                                    <th>内容</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <button id="firstPage">首页</button>
+                        <button id="prevPage">上一页</button>
+                        <div id="pageNumbers" class="page-numbers"></div>
+                        <button id="nextPage">下一页</button>
+                        <button id="lastPage">尾页</button>
+                        <div class="page-info">第 <span id="currentPage">1</span> 页，共 <span id="totalPages">1</span> 页</div>
+                    </div>
+                </div>
+            </div>
+            <div class="" id="workEdit">
+                <div id="pictureDisplay">
+                    <div id="picture">
+                        <img src="" id="workImg">
+                    </div>
+                    <button class="tripBtn" id="postPicture">上传图片</button>
+                    <button class="tripBtn" id="showMsg">详细信息</button>
+                    <button class="tripBtn" id="backBtn">返回</button>
+                </div>
+                <div id="workWrite">
+                    <div id="workHeader">
+                        <h2>游记</h2>
+                    </div>
+                        <textarea id="workContent"></textarea>
+                    <button id="saveWork">保存游记</button>
+                    <button id="editWork">编辑游记</button>
+                    <button id="delWork">删除游记</button>
+                </div>
+            </div>
+            <div id="naviBar">
+                <button class="naviBtn" id="listBtn">游记列表</button>
+                <button class="naviBtn" id="editBtn">添加游记</button>
+                <button class="naviBtn" id="generate">生成轨迹</button>
+            </div>
+        </div>
+        <script
+            type="text/javascript"
+            src="https://webapi.amap.com/maps?v=2.0&key=67c9233902f203462374f16c2ed76635"
+        ></script>
+        <script type="text/javascript" src="./render.js"></script>
+    </body>
+</html>

@@ -1,0 +1,58 @@
+#naviBar {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    height: 10%;
+    width: 90%;
+    background-color: #fff;
+    top: 89%;
+    border-radius: 15px;
+    box-shadow: 0 0 10px 1px #757575;
+    align-items: center;
+    display: flex;
+}
+
+.naviBtn {
+    position: relative;
+    height: 60%;
+    width: 15%;
+    font-size: 100%;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    overflow: hidden;
+    box-shadow: 0 0 7px 1px#575757;
+}
+
+#listBtn {
+    position: absolute;
+    left: 20%;
+    transform: translate(-50%);
+    background-color: #212121;
+    color: #fff;
+}
+
+#editBtn {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    background-color: #212121;
+    color: #fff;
+}
+
+#generate {
+    position: absolute;
+    left: 80%;
+    transform: translate(-50%);
+    background-color: #212121;
+    color: #fff;
+}
+.naviBtn:hover { animation: blur 0.5s forwards; letter-spacing: 3px; }
+
+@keyframes blur {
+    0% { filter: blur(0); transform: scale(1), translate(-50%);}
+    50% { filter: blur(3px); transform: scale(1.1), translate(-50%);}
+    100% { filter: blur(0); transform: scale(1.05), translate(-50%);}
+}
