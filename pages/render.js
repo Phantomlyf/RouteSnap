@@ -3,23 +3,12 @@ var map = new AMap.Map("map", {
 })
 
 var geocoder
-const tableData = [
-    {time: "2024/11/12", position: "湖北省武汉市", context: "1234123451235", id: 0, lat: 33.9, lng: 111.6},
-    {time: "2024/11/12", position: "湖北省武汉市", context: "1234123451235", id: 1, lat: -33.9, lng: 111.6},
-    {time: "2024/11/12", position: "湖北省武汉市", context: "1234123451235", id: 2, lat: 43.9, lng: 111.6},
-    {time: "2024/11/12", position: "湖北省武汉市", context: "1234123451235", id: 3, lat: 53.9, lng: 111.6},
-    {time: "2024/11/12", position: "湖北省武汉市", context: "1234123451235", id: 4, lat: 63.9, lng: 111.6},
-    {time: "2024/11/12", position: "湖北省武汉市", context: "1234123451235", id: 5, lat: 73.9, lng: 111.6},
-    {time: "2024/11/12", position: "湖北省武汉市", context: "1234123451235", id: 6, lat: -13.9, lng: 111.6},
-    {time: "2024/11/12", position: "湖北省武汉市", context: "1234123451235", id: 7, lat: -23.9, lng: 111.6},
-    {time: "2024/11/12", position: "湖北省武汉市", context: "1234123451235", id: 8, lat: -43.9, lng: 111.6},
-    {time: "2024/11/12", position: "湖北省武汉市", context: "1234123451235", id: 9, lat: -53.9, lng: 111.6},
-    {time: "2024/11/12", position: "湖北省武汉市", context: "1234123451235", id: 9, lat: -63.9, lng: 111.6},
-]
+var workId = 0
+
 // 分页配置
 const rowsPerPage = 5
 let currentPage = 1
-let filteredData = [...tableData]
+var filteredData = []
 
 var trip = {
     picturePath: null,
@@ -44,10 +33,10 @@ const totalPagesEl = document.getElementById('totalPages')
 const pageNumbersEl = document.getElementById('pageNumbers')
 const listBtn = document.getElementById('listBtn')
 const editBtn = document.getElementById('editBtn')
-const backBtn = document.getElementById('backBtn')
+const backBtn = document.getElementById('return')
 const generate = document.getElementById('generate')
-const mapPage = document.getElementById('map')
-const workList = document.getElementById('workList')
+const mapContainer = document.getElementById('mapContainer')
+const listContainer = document.getElementById('listContainer')
 const workEdit = document.getElementById('workEdit')
 const workImg = document.getElementById('workImg')
 const workContent = document.getElementById('workContent')
@@ -56,23 +45,28 @@ const saveWork = document.getElementById('saveWork')
 const editWork = document.getElementById('editWork')
 const delWork = document.getElementById('delWork')
 
+console.log(listBtn)
+
 listBtn.addEventListener('click', function() {
-    workList.classList.toggle('hidden');
-    mapPage.classList.toggle('hidden');
+    listContainer.classList.toggle('hidden')
+    mapContainer.classList.toggle('hidden')
+    listBtn.classList.toggle('active')
+    console.log(666)
 })
 
 editBtn.addEventListener('click', function() {
-    workEdit.classList.toggle('hidden');
+    workEdit.classList.remove('hidden');
+    renderWork(0)
 })
 
 backBtn.addEventListener('click', function() {
     workEdit.classList.add('hidden');
 })
 
-generate.addEventListener('click', function() {
-    mapPage.classList.remove('hidden');
-    workList.classList.add('hidden');
-})
+// generate.addEventListener('click', function() {
+//     mapPage.classList.remove('hidden');
+//     workList.classList.add('hidden');
+// })
 
 postPicture.addEventListener('click', async function() {
   try {
@@ -111,15 +105,19 @@ saveWork.addEventListener('click', async function() {
     saveWork.classList.add('hidden')
     trip.context = workContent.value
     console.log(trip.context)
-    const response = await elt.ipcRenderer.invoke('save-work', trip.picturePath, trip.detailedPos, trip.context)
-    console.log(response)
+    if (workId) {
+        const response = await elt.ipcRenderer.invoke('save-work', trip.picturePath, trip.detailedPos, trip.context)
+        console.log(response)
+    } else {
+
+    }
 })
 
 editWork.addEventListener('click', function() {
     editWork.classList.add('hidden')
     saveWork.classList.remove('hidden')
-    postPicture.setAttribute('disabled', false)
-    workContent.setAttribute('readonly', false)
+    postPicture.removeAttribute('disabled', true)
+    workContent.removeAttribute('readonly', true)
 })
 
 delWork.addEventListener('click', function() {
@@ -127,67 +125,117 @@ delWork.addEventListener('click', function() {
 })
 
 // 初始化
-function init() {
-    loadData();
-    renderTable();
-    setupEventListeners();
-    updatePagination();
+async function init() {
+    return
+    await loadData()
+    await renderTable()
+    setupEventListeners()
+    updatePagination()
 }
 
-function loadData() {
-    var path = new Array();
-
-    // filteredData = elt.ipcRenderer.invoke('get-all-id')
-
-    filteredData.forEach(pos => {
-        let icon = new AMap.icon({
-            size: new AMap.Size(40, 50),    // 图标尺寸
-            image: '',  // Icon的图像
-            imageOffset: new AMap.Pixel(0, -60),  // 图像相对展示区域的偏移量，适于雪碧图等
-            imageSize: new AMap.Size(40, 50)   // 根据所设置的大小拉伸或压缩图片
-        })
-        let marker = new AMap.Marker({
-            position: new AMap.LngLat(pos.lng, pos.lat),
-            icon: icon
-        })
-        path.push([pos.lng, pos.lat])
-        marker.on('click', function() {
-            workEdit.classList.remove('hidden')
-        })
-        map.add(marker);
-    })
-    // 创建折线
-    const polyline = new AMap.Polyline({
-        path: path,             // 路径坐标
-        strokeColor: "#3366FF", // 线颜色
-        strokeWeight: 5,        // 线宽
-        strokeStyle: "solid",   // 线样式
-        lineJoin: 'round'       // 折点处理方式
-    });
-
-    map.add(polyline);
-    map.setFitView();
+async function loadData() {
+    try {
+        const idsResponse = await elt.ipcRenderer.invoke('get-all-id');
+        filteredData = idsResponse.data;
+        
+        const path = [];
+        const markers = [];
+        
+        for (const id of filteredData) {
+            try {
+                const msgResponse = await elt.ipcRenderer.invoke('get-msg-by-id', id);
+                const msg = msgResponse.data;
+                
+                console.log("Marker data:", msg);
+                
+                if (!msg || !msg.longitude || !msg.latitude) {
+                    console.error(`Invalid coordinates for ID ${id}:`, msg);
+                    continue;
+                }
+                
+                function getFileUrl(filePath) {
+                    let path = filePath.replace(/\\/g, '/');
+                    if (!path.startsWith('file://')) {
+                        path = `file:///${path}`;
+                    }
+                    return path;
+                }
+                
+                let icon = null;
+                if (msg.imagePath) {
+                    icon = new AMap.Icon({
+                        size: new AMap.Size(40, 50),
+                        image: getFileUrl(msg.imagePath),
+                        imageOffset: new AMap.Pixel(0, -60),
+                        imageSize: new AMap.Size(40, 50)
+                    });
+                }
+                
+                // 6. 创建标记
+                const marker = new AMap.Marker({
+                    position: new AMap.LngLat(Number(msg.longitude), 
+                    Number(msg.latitude)),
+                    icon: icon || undefined
+                });
+                
+                path.push([Number(msg.longitude), Number(msg.latitude)]);
+                
+                marker.on('click', () => {
+                    renderWork(id)
+                });
+                
+                map.add(marker);
+                markers.push(marker);
+                
+            } catch (error) {
+                console.error(`Error processing ID ${id}:`, error);
+            }
+        }
+        
+        if (path.length > 0) {
+            const polyline = new AMap.Polyline({
+                path: path,
+                strokeColor: "#3366FF",
+                strokeWeight: 5,
+                strokeStyle: "solid",
+                lineJoin: 'round'
+            });
+            map.add(polyline);
+        }
+        
+        if (markers.length > 0) {
+            map.setFitView(markers);
+        }
+        
+    } catch (error) {
+        console.error("Error in loadData:", error);
+    }
 }
 
 // 渲染表格
-function renderTable() {
+async function renderTable() {
+    console.log(1)
     tableBody.innerHTML = '';
     
     const startIndex = (currentPage - 1) * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
     const pageData = filteredData.slice(startIndex, endIndex);
     
-    pageData.forEach(row => {
+    pageData.forEach(async id => {
+        console.log(id)
+        const response = await elt.ipcRenderer.invoke('get-msg-by-id', id)
+        const msg = response.data
+        console.log(msg)
         const tr = document.createElement('tr');
         
         tr.innerHTML = `
-            <td>${row.time}</td>
-            <td>${row.position}</td>
-            <td>${row.context}</td>
+            <td>${msg.takeTime}</td>
+            <td>${msg.location}</td>
+            <td>${msg.content}</td>
         `;
 
-        tr.addEventListener('click', function() {
-            workEdit.classList.remove('hidden');
+        tr.addEventListener('click', async function() {
+            await renderWork(id)
         })
         
         tableBody.appendChild(tr);
@@ -262,25 +310,37 @@ function updatePagination() {
 }
 
 // 加载游记编辑界面
-function renderWork(id) {
+async function renderWork(id) {
+    workId = id
     workEdit.classList.remove('hidden')
     if (!id) {
+        /*-----------界面修改-----------*/
         workImg.classList.add('hidden')
-        workContent.setAttribute('readonly', false)
-        workContent.context = ""
         saveWork.classList.remove('hidden')
         editWork.classList.add('hidden')
-        postPicture.setAttribute('disabled', false)
+        workContent.removeAttribute('readonly', true)
+        postPicture.removeAttribute('disabled', true)
         delWork.setAttribute('disabled', true)
+
+        /*-----------数据修改-----------*/
+        workContent.value = ""
+        workImg.src = ""
     } else {
-        const Msg = elt.ipcRenderer.invoke('get-msg-by-id', id)
+        /*-----------界面修改-----------*/
         workImg.classList.remove('hidden')
-        workContent.setAttribute('readonly', true)
-        workContent.context = Msg.context
         saveWork.classList.add('hidden')
         editWork.classList.remove('hidden')
+        workContent.setAttribute('readonly', true)
         postPicture.setAttribute('disabled', true)
-        delWork.setAttribute('disabled', false)
+        delWork.removeAttribute('disabled', true)
+
+        /*-----------数据修改-----------*/
+        const response = await elt.ipcRenderer.invoke('get-msg-by-id', id)
+        const msg = response.data
+        workImg.src = msg.imagePath
+        workContent.value = msg.content
+        trip.picturePath = msg.imagePath
+        trip.detailedPos = msg.location
     }
 }
 

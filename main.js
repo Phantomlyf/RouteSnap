@@ -3,6 +3,9 @@ const axios = require('axios')
 const path = require('path')
 const fs = require('fs')
 const FormData = require('form-data')
+const urlPath = 'http://localhost:4399'
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+
 
 async function postImg(_, filePath) {
     if (!filePath) return { error: "No file selected" }
@@ -42,7 +45,7 @@ async function saveWork(_, filePath, detailedPos, context) {
         form.append('location', detailedPos)
         form.append('content', context)
 
-        const response = await axios.post('http://localhost:4399/upload/travel', form, {
+        const response = await axios.post('http://localhost:4399/travel/upload', form, {
             headers: {
                 ...form.getHeaders()
             }
@@ -57,7 +60,7 @@ async function saveWork(_, filePath, detailedPos, context) {
 
 async function getAllId(_) {
     try {
-        const response = await axios.get('')
+        const response = await axios.get('http://localhost:4399/travel/listId')
         return response.data
     } catch(e) {
         console.error(e)
@@ -67,7 +70,7 @@ async function getAllId(_) {
 
 async function getMsgById(_, id) {
     try {
-        const response = await axios.get('', id)
+        const response = await axios.get(`${urlPath}/travel/${id}`)
         return response.data
     } catch(e) {
         console.error(e)
@@ -77,13 +80,17 @@ async function getMsgById(_, id) {
 
 app.on('ready', () => {
     const win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1280,
+        height: 720,
+        minWidth: 1280,
+        minHeight: 720,
         autoHideMenuBar: true,
         webPreferences:{
-            preload:path.resolve(__dirname, './preload.js')
+            preload:path.resolve(__dirname, './preload.js'),
+            // webSecurity: false14
         }
     })
+    win.setAspectRatio(16 / 9)
     ipcMain.handle('file-open', openFile)
     ipcMain.handle('post-img', postImg)
     ipcMain.handle('save-work', saveWork)

@@ -1,58 +1,185 @@
 #naviBar {
     position: absolute;
-    left: 50%;
-    transform: translate(-50%);
-    height: 10%;
-    width: 90%;
+    left: 3%;
+    transform: translate(0, -50%);
+    height: 80%;
+    width: 10%;
     background-color: #fff;
-    top: 89%;
-    border-radius: 15px;
-    box-shadow: 0 0 10px 1px #757575;
-    align-items: center;
-    display: flex;
-}
-
-.naviBtn {
-    position: relative;
-    height: 60%;
-    width: 15%;
-    font-size: 100%;
-    font-weight: bold;
-    border: none;
+    top: 50%;
     border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.4s ease;
-    overflow: hidden;
-    box-shadow: 0 0 7px 1px#575757;
+    box-shadow: 0 0 10px 0px #00000060;
 }
 
 #listBtn {
     position: absolute;
-    left: 20%;
-    transform: translate(-50%);
+    left: 50%;
+    top: 6%;
+    transform: translate(-50%, -6%);
+    height: 28%;
+    width: 70%;
+    border-radius: 10000px;
+    cursor: pointer;
+    background-color: #d9d9d9;
+    box-shadow: inset 0 8px 60px rgba(0, 0, 0, 0.1),
+                inset 0 8px 8px rgba(0, 0, 0, 0.1),
+                inset 0 -8px 8px rgba(0, 0, 0, 0.1);
+}
+
+#listBtn #indicator {
+    position: absolute;
+    aspect-ratio: 1 / 1;
+    width: 85%;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
     background-color: #212121;
-    color: #fff;
+    border-radius: 100px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5),
+                inset 0 4px 4px rgba(255, 255, 255, 0.2);
+    transition: 0.5s;
+}
+
+#listBtn.active #indicator {
+    top: 70%;
+}
+
+#listBtn #mapIconContainer {
+    width: 30%;
+    height: 30%;
+    position: absolute;
+    align-items: center;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    transition: 0.5s;
+    overflow: hidden;
+}
+
+#listBtn.active #mapIconContainer {
+    width: 35%;
+    height: 35%;
+    top: 25%;
+}
+
+#listBtn #mapIcon {
+    width: 100%;
+    height: 100%;
+    transform: translate(100px);
+    filter: drop-shadow(-100px 0 0 #ffffff);
+}
+
+#listBtn.active #mapIcon {
+    filter: drop-shadow(-100px 0 0 #000);
+}
+
+#listBtn #listIconContainer {
+    width: 40%;
+    height: 40%;
+    position: absolute;
+    align-items: center;
+    left: 50%;
+    top: 75%;
+    transform: translate(-50%, -50%);
+    transition: 0.5s;
+    overflow: hidden;
+    /* background-color: aqua; */
+}
+
+#listBtn.active #listIconContainer {
+    width: 35%;
+    height: 35%;
+    top: 70%;
+}
+
+#listBtn #listIcon {
+    width: 100%;
+    height: 100%;
+    transform: translate(100px);
+    filter: drop-shadow(-100px 0 0 #000);
+}
+
+#listBtn.active #listIcon {
+    filter: drop-shadow(-100px 0 0 #fff);
 }
 
 #editBtn {
     position: absolute;
     left: 50%;
-    transform: translate(-50%);
-    background-color: #212121;
-    color: #fff;
+    aspect-ratio: 1 / 1;
+    width: 60%;
+    top: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #339933;
+    box-shadow: 0 0 8px 0 #00000060;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+#editBtn:hover {
+    width: 65%;
+}
+
+#plusIcon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    aspect-ratio: 1 / 1;
+    transition: 0.3s;
+}
+
+#editBtn:hover #plusIcon {
+    transform: translate(-50%, -50%) rotate(90deg);
 }
 
 #generate {
     position: absolute;
-    left: 80%;
-    transform: translate(-50%);
-    background-color: #212121;
-    color: #fff;
+    left: 50%;
+    aspect-ratio: 1 / 1;
+    width: 60%;
+    top: 75%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #339933;
+    box-shadow: 0 0 8px 0 #00000060;
+    transition: 0.5s;
 }
-.naviBtn:hover { animation: blur 0.5s forwards; letter-spacing: 3px; }
 
-@keyframes blur {
-    0% { filter: blur(0); transform: scale(1), translate(-50%);}
-    50% { filter: blur(3px); transform: scale(1.1), translate(-50%);}
-    100% { filter: blur(0); transform: scale(1.05), translate(-50%);}
+#generate:hover {
+    width: 65%;
+}
+
+#generate #outCircle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    width: 40%;
+    aspect-ratio: 1 / 1;
+    /* background-color: aqua; */
+    box-shadow: 0 0 0 4px #fff;
+    transition: 0.3s;
+}
+
+#generate:hover #outCircle {
+    width: 50%;
+}
+
+#generate #midPoint {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    width: 20%;
+    aspect-ratio: 1 / 1;
+    background-color: #fff;
+    transition: 0.3s;
+}
+
+#generate:hover #midPoint {
+    width: 15%;
 }

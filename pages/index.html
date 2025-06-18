@@ -3,18 +3,18 @@
     <head>
         <meta charset="UTF-8" />
         <title>index</title>
-        <link rel="stylesheet" href="./index.css">
         <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self' https://*.amap.com http://*.autonavi.com;
+        default-src 'self' https://*.amap.com http://*.autonavi.com 'unsafe-eval' 'unsafe-inline';
         script-src 'self' https://*.amap.com 'unsafe-inline' 'unsafe-eval' blob:;
         style-src 'self' https://*.amap.com 'unsafe-inline';
-        img-src * data: blob:;
+        img-src * data: blob: 'unsafe-eval' 'unsafe-inline';
         connect-src *;
         font-src *;
         ">
-        <link rel="stylesheet" type="text/css" href="./map-show.css">
+        <link rel="stylesheet" type="text/css" href="./mid-window.css">
         <link rel="stylesheet" type="text/css" href="./bar.css">
         <link rel="stylesheet" type="text/css" href="./work-edit.css">
+        <link rel="stylesheet" type="text/css" href="./style.css">
         <script type="text/javascript">
             window._AMapSecurityConfig = {
                 securityJsCode: "d2a5e39f22600e87ecb82b4933dc847a",
@@ -24,68 +24,132 @@
 
     <body>
         <div id="background">
-            <div class="leftWindows">
-                <div id="mapBack"></div>
-                <div id="map"></div>
-            </div>
-            <div class="leftWindows">
-                <div class="hidden" id="workList">
-                    <div id="listSearch">
-                        <select id="year1"></select>
-                        <select id="month1"></select>
-                        <select id="day1"></select>
-                        
-                        <select id="year2"></select>
-                        <select id="month2"></select>
-                        <select id="day2"></select>
-                    </div>
-                    <div id="table-container">
-                        <table id="worktable">
-                            <thead>
-                                <tr>
-                                    <th>时间</th>
-                                    <th>地点</th>
-                                    <th>内容</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody">
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination">
-                        <button id="firstPage">首页</button>
-                        <button id="prevPage">上一页</button>
-                        <div id="pageNumbers" class="page-numbers"></div>
-                        <button id="nextPage">下一页</button>
-                        <button id="lastPage">尾页</button>
-                        <div class="page-info">第 <span id="currentPage">1</span> 页，共 <span id="totalPages">1</span> 页</div>
-                    </div>
-                </div>
-            </div>
-            <div class="" id="workEdit">
-                <div id="pictureDisplay">
-                    <div id="picture">
-                        <img src="" id="workImg">
-                    </div>
-                    <button class="tripBtn" id="postPicture">上传图片</button>
-                    <button class="tripBtn" id="showMsg">详细信息</button>
-                    <button class="tripBtn" id="backBtn">返回</button>
-                </div>
-                <div id="workWrite">
-                    <div id="workHeader">
-                        <h2>游记</h2>
-                    </div>
-                        <textarea id="workContent"></textarea>
-                    <button id="saveWork">保存游记</button>
-                    <button id="editWork">编辑游记</button>
-                    <button id="delWork">删除游记</button>
-                </div>
-            </div>
             <div id="naviBar">
-                <button class="naviBtn" id="listBtn">游记列表</button>
-                <button class="naviBtn" id="editBtn">添加游记</button>
-                <button class="naviBtn" id="generate">生成轨迹</button>
+                <div class="" id="listBtn">
+                    <div id="indicator"></div>
+                    <div id="mapIconContainer">
+                        <img src="../resourse/Map.svg" id="mapIcon"/>
+                    </div>
+                    <div class="listBtnChild" id="listIconContainer">
+                        <img src="../resourse/List.svg" id="listIcon"/>
+                    </div>
+                </div>
+                <div id="editBtn">
+                    <img src="../resourse/Plus.svg" id="plusIcon"/>
+                </div>
+                <div id="generate">
+                    <div id="outCircle"></div>
+                    <div id="midPoint"></div>
+                </div>
+            </div>
+            <div id="midWindow">
+                <div id="searchBar">
+                    <div id="startTimeContainer">
+                        <div class="time" id="startTime">1999/2/21</div>
+                        <div class="timeChooseBtn" id="startTimeChooseBtn">
+                            <img src="../resourse/Calendar.svg" class="calendar"/>
+                        </div>
+                    </div>
+
+                    <div id="endTimeContainer">
+                        <div class="time" id="endTime">2099/2/21</div>
+                        <div class="timeChooseBtn" id="startTimeChooseBtn">
+                            <img src="../resourse/Calendar.svg" class="calendar"/>
+                        </div>
+                    </div>
+                    <div id="searchBtn">
+                        <img src="../resourse/Search.svg" id="searchIcon"/>
+                    </div>
+                    <div id="refrashBtn">
+                        <img src="../resourse/Refresh ccw.svg" id="refrashIcon"/>
+                    </div>
+                </div>
+                <div class="" id="mapContainer">
+                    <div id="map"></div>
+                </div>
+                <div class="hidden" id="listContainer">
+                    <div id="title">
+                        <div class="titleText" id="textTime">拍摄时间</div>
+                        <div class="titleText" id="textPos">拍摄地点</div>
+                        <div class="titleText" id="textCot">游记内容</div>
+                    </div>
+                    <table>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td>2025/6/18</td>
+                                <td>湖北省武汉市</td>
+                                <td>12345678</td>
+                            </tr>
+                            <tr>
+                                <td>2025/6/18</td>
+                                <td>湖北省武汉市</td>
+                                <td>12345678</td>
+                            </tr>
+                            <tr>
+                                <td>2025/6/18</td>
+                                <td>湖北省武汉市</td>
+                                <td>12345678</td>
+                            </tr>
+                            <tr>
+                                <td>2025/6/18</td>
+                                <td>湖北省武汉市</td>
+                                <td>12345678</td>
+                            </tr>
+                            <tr>
+                                <td>2025/6/18</td>
+                                <td>湖北省武汉市</td>
+                                <td>12345678</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="underBtn" id="firstPage">
+                        <img src="../resourse/Chevrons left.svg" class="underIcon" id="firstIcon"/>
+                    </div>
+                    <div class="underBtn" id="prevPage">
+                        <img src="../resourse/Chevron left.svg" class="underIcon" id="prevIcon"/>
+                    </div>
+                    <div id="pageNumbers" class="page-numbers">1 / --</div>
+                    <div class="underBtn" id="nextPage">
+                        <img src="../resourse/Chevron right.svg" class="underIcon" id="nextIcon"/>
+                    </div>
+                    <div class="underBtn" id="lastPage">
+                        <img src="../resourse/Chevrons right.svg" class="underIcon" id="lastIcon"/>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden" id="workEdit">
+                <div id="pictureContainer">
+                    <div id="pictureDisplay">
+                        <img src="" class="hidden" id="workImg"/>
+                    </div>
+                    <div id="postPicture">
+                        <img src="../resourse/Arrow up.svg" class="underIcon" id="postIcon"/>
+                    </div>
+                    <div id="travelSwitch">
+                        <div id="indicator2"></div>
+                        <div id="pctIconCtn">
+                            <img src="../resourse/Image.svg" class="underIcon" id="pctIcon"/>
+                        </div>
+                        <div id="fileIconCtn">
+                            <img src="../resourse/File text.svg" class="underIcon" id="fileIcon"/>
+                        </div>
+                    </div>
+                    <div id="maximize">
+                        <img src="../resourse/Maximize.svg" class="underIcon" id="maxIcon"/>
+                    </div>
+                </div>
+                <div class="workBtn" id="return">
+                    <img src="../resourse/Corner up-left.svg" class="underIcon" id="returnIcon"/>
+                </div>
+                <div class="workBtn" id="showMsg">
+                    <img src="../resourse/Message square.svg" class="underIcon" id="msgIcon"/>
+                </div>
+                <div class="workBtn" id="saveWork">
+                    <img src="../resourse/Save.svg" class="underIcon" id="saveIcon"/>
+                </div>
+                <div class="workBtn" id="delWork">
+                    <img src="../resourse/X.svg" class="underIcon" id="delIcon"/>
+                </div>
             </div>
         </div>
         <script
