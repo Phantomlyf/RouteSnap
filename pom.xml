@@ -28,7 +28,13 @@
     <properties>
         <java.version>17</java.version>
     </properties>
-
+    <repositories>
+        <repository>
+            <id>AsposeJavaRepo</id>
+            <name>Aspose Java Repository</name>
+            <url>https://releases.aspose.com/java/repo/</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -82,22 +88,40 @@
             <version>0.4.20</version>
         </dependency>
 
-        <!-- 图像格式扩展支持 -->
+        <!--heic转化jpeg-->
         <dependency>
-            <groupId>com.twelvemonkeys.imageio</groupId>
-            <artifactId>imageio-jpeg</artifactId>
-            <version>3.9.4</version>
+            <groupId>openize</groupId>
+            <artifactId>openize-heic</artifactId>
+            <version>25.4</version>
         </dependency>
+
+
         <dependency>
-            <groupId>com.twelvemonkeys.imageio</groupId>
-            <artifactId>imageio-webp</artifactId>
-            <version>3.9.4</version>
+            <groupId>openize</groupId>
+            <artifactId>openize-heic</artifactId>
+            <version>25.4</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+
+        <!-- 图片处理 -->
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
+        </dependency>
+
+<!--        哈希计算依赖-->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.16.0</version>
         </dependency>
 
         <dependency>
-            <groupId>com.twelvemonkeys.imageio</groupId>
-            <artifactId>imageio-bmp</artifactId>
-            <version>3.9.4</version>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <!--            jdk17使用1.4.6版本-->
+            <version>1.4.6</version>
         </dependency>
 
     </dependencies>

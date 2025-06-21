@@ -34,5 +34,14 @@ app:
   storage:
     imageDir: "D:/AAA/image"
     maxSizeMB: 10     # 最大图片大小
-    allowedTypes: image/jpeg,image/png,image/tiff,image/webp,image/wav,image/avi,image/psd,image/bmp,image/gif,image/heif,image/raw,image/heic
+    allowedTypes: image/jpeg,image/jpg,image/png,image/tiff,image/webp,image/wav,image/avi,image/psd,image/bmp,image/gif,image/heif,image/raw,image/heic,image/HEIC,image/HEIF
     thumbnailDir: "D:/AAA/thumbnail"
+  svf:
+    baseUrl: "http://localhost/4399"
+    cleanup-delay-minutes: 30
+    temp-dir: "D:/AAA/temp"
+
+#分页参数配置
+page:
+  pageSize: 8
+

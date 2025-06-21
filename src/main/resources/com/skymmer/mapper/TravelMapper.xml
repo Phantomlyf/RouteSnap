@@ -6,8 +6,8 @@
 
 
     <insert id="insert" parameterType="com.skymmer.pojo.Travel" keyProperty = "id" useGeneratedKeys = "true">
-        insert into TB_TRAVEL(IMAGE_PATH, LATITUDE, LONGITUDE, TAKEN_TIME, LOCATION, CONTENT, MAKE, MODEL, TYPE, WIDTH, HEIGHT, FNUMBER, EXPOSURE_TIME, ISO)
-        values (#{imagePath},#{latitude},#{longitude},#{takenTime},#{location},#{content},#{make},#{model},#{type},#{width},#{height},#{fnumber},#{exposureTime},#{iso})
+        insert into TB_TRAVEL(IMAGE_PATH, LATITUDE, LONGITUDE,GCJ_LAT,gcj_lon, TAKEN_TIME, LOCATION, CONTENT, MAKE, MODEL, TYPE, WIDTH, HEIGHT, FNUMBER, EXPOSURE_TIME, ISO)
+        values (#{imagePath},#{latitude},#{longitude},#{gcjLat},#{gcjLon},#{takenTime},#{location},#{content},#{make},#{model},#{type},#{width},#{height},#{fnumber},#{exposureTime},#{iso})
     </insert>
 
     <select id="selectIds" resultType="integer">
@@ -16,6 +16,15 @@
 
     <select id="selectById"  parameterType="integer"  resultType="com.skymmer.pojo.Travel">
         select * from TB_TRAVEL where ID = #{id}
+    </select>
+
+    <select id="selectGpsInfos" resultType="com.skymmer.pojo.GpsInfo">
+        select  ID, GCJ_LAT,GCJ_LON from TB_TRAVEL
+    </select>
+
+
+    <select id="selectShortInfos" resultType="com.skymmer.pojo.ListInfo">
+        select ID,TAKEN_TIME,LOCATION,CONTENT from  TB_TRAVEL
     </select>
 
     <select id="selectByCase" resultType="com.skymmer.pojo.Travel">

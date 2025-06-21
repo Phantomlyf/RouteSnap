@@ -12,6 +12,8 @@ public class Travel {
     private String content;
     private Double latitude;
     private Double longitude;
+    private Double gcjLat;
+    private Double gcjLon;
     private Timestamp takenTime;
     private String location;
     private String make;
@@ -24,6 +26,25 @@ public class Travel {
     private String iso;
 
     public Travel() {
+    }
+
+    public Travel(String imagePath, String content, Double latitude, Double longitude, Double gcjLat, Double gcjLon, Timestamp takenTime, String location, String make, String model, String type, String width, String height, String fnumber, String exposureTime, String iso) {
+        this.imagePath = imagePath;
+        this.content = content;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.gcjLat = gcjLat;
+        this.gcjLon = gcjLon;
+        this.takenTime = takenTime;
+        this.location = location;
+        this.make = make;
+        this.model = model;
+        this.type = type;
+        this.width = width;
+        this.height = height;
+        this.fnumber = fnumber;
+        this.exposureTime = exposureTime;
+        this.iso = iso;
     }
 
     public Travel(Double latitude, Double longitude, Timestamp takenTime, String make, String model, String type, String width, String height, String fnumber, String exposureTime, String iso) {
@@ -41,24 +62,6 @@ public class Travel {
     }
 
     public Travel(String imagePath, String content, Double latitude, Double longitude, Timestamp takenTime, String location, String make, String model, String type, String width, String height, String fnumber, String exposureTime, String iso) {
-        this.imagePath = imagePath;
-        this.content = content;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.takenTime = takenTime;
-        this.location = location;
-        this.make = make;
-        this.model = model;
-        this.type = type;
-        this.width = width;
-        this.height = height;
-        this.fnumber = fnumber;
-        this.exposureTime = exposureTime;
-        this.iso = iso;
-    }
-
-    public Travel(Integer id, String imagePath, String content, Double latitude, Double longitude, Timestamp takenTime, String location, String make, String model, String type, String width, String height, String fnumber, String exposureTime, String iso) {
-        this.id = id;
         this.imagePath = imagePath;
         this.content = content;
         this.latitude = latitude;

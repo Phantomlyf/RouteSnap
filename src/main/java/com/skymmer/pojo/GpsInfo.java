@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class GpsInfo {
-    private String latitude;
-    private String longitude;
+    private Integer id;
+    private String gcjLat;
+    private String gcjLon;
 }

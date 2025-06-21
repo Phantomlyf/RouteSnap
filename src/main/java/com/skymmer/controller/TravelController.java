@@ -1,11 +1,15 @@
 package com.skymmer.controller;
 
 import com.skymmer.mapper.TravelMapper;
+import com.skymmer.pojo.GpsInfo;
+import com.skymmer.pojo.ListInfo;
 import com.skymmer.pojo.Travel;
 import com.skymmer.service.TravelService;
 import com.skymmer.utils.DateConverter;
+import com.skymmer.utils.ImageConverter;
 import com.skymmer.utils.MetaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.skymmer.pojo.Result;
@@ -23,15 +27,34 @@ public class TravelController {
     TravelService travelService;
     @PostMapping("/upload")
     public Result uploadTravel(@RequestParam MultipartFile file,@RequestParam String location, @RequestParam String content){
-        int id = travelService.upload(file,location,content);
-        if(id>0){
-            return Result.success(id);
+        int id = 0;
+        try {
+            id = travelService.upload(file,location,content);
+            if(id>0){
+                return Result.success(id);
+            }
+            else{
+                return  Result.error(1101,"游记上传失败");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        else{
-            return  Result.error(1101,"游记上传失败");
+    }
+
+    @PostMapping("/upload2")
+    public Result uploadTravel(@RequestParam String previewPath, @RequestBody Travel travel ){
+        int id = 0;
+        try {
+            id = travelService.upload(previewPath,travel);
+            if(id>0){
+                return Result.success(id);
+            }
+            else{
+                return  Result.error(1101,"游记上传失败");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-
     }
     @GetMapping("/listId")
     public Result listId(){
@@ -44,6 +67,7 @@ public class TravelController {
         }
     }
 
+
     @GetMapping("/{id}")
     public Result getById(@PathVariable("id") Integer id){
         Travel travel= travelService.getById(id);
@@ -54,6 +78,31 @@ public class TravelController {
             return Result.error(1103,"游记id信息不正确或数据库损坏");
         }
     }
+
+    @GetMapping("/listGps")
+    public Result listGps(){
+        List<GpsInfo> gpsList = travelService.listGps();
+        if(gpsList != null){
+            return  Result.success(gpsList);
+        }
+        else{
+            return Result.error(1104,"所有游记gps信息获取失败");
+        }
+
+    }
+
+    @GetMapping("/list")
+    public Result list(@RequestParam(defaultValue = "1") Integer page){
+        List<ListInfo> shortList = travelService.listShort(page);
+        if(shortList != null){
+            return Result.success(shortList);
+        }
+        else{
+            return Result.error(1105,page+"页简略数据获取失败");
+        }
+    }
+
+
 
     @GetMapping("listBycase")
     public Result selectTravel(@RequestParam(required=false) String startTime,

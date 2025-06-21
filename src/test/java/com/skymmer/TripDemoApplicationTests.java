@@ -7,6 +7,7 @@ import com.skymmer.utils.MetaUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -46,10 +47,6 @@ class TripDemoApplicationTests {
         travelMapper.insert(travel);
     }
 
-    @Test
-    void testSelect(){
-        travelMapper.select(null,null,null);
-    }
 
     @Test
     void testSelectAll(){
@@ -61,5 +58,6 @@ class TripDemoApplicationTests {
         List<String> strings = travelMapper.selectPath();
         System.out.println(strings);
     }
+
 
 }

@@ -10,8 +10,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImageInfo {
+    private String previewPath;
     private Double latitude;
     private Double longitude;
+    private Double gcjLat;
+    private Double gcjLon;
+    private String location;
     private Timestamp takenTime;
     private String make;
     private String model;
@@ -21,5 +25,4 @@ public class ImageInfo {
     private String fnumber;
     private String exposureTime;
     private String iso;
-
 }

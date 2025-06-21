@@ -2,6 +2,7 @@ package com.skymmer.mapper;
 
 
 import com.skymmer.pojo.GpsInfo;
+import com.skymmer.pojo.ListInfo;
 import com.skymmer.pojo.Travel;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -26,8 +27,14 @@ public interface TravelMapper {
                         @Param("location") String location);
 
     Travel selectById(@Param("id") Integer id);
+
+    List<GpsInfo> selectGpsInfos();
+
+    List<ListInfo> selectShortInfos();
+
     List<GpsInfo> genTra(@Param("start") Timestamp start,
                          @Param("end") Timestamp end);
+
     @Select("select * from TB_TRAVEL")
     List<Travel> selectALl();
 
