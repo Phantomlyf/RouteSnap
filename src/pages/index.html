@@ -4,10 +4,10 @@
         <meta charset="UTF-8" />
         <title>index</title>
         <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self' https://*.amap.com http://*.autonavi.com 'unsafe-eval' 'unsafe-inline';
-        script-src 'self' https://*.amap.com 'unsafe-inline' 'unsafe-eval' blob:;
-        style-src 'self' https://*.amap.com 'unsafe-inline';
-        img-src * data: blob: 'unsafe-eval' 'unsafe-inline';
+        default-src 'self' https://*.amap.com http://*.amap.com http://*.autonavi.com 'unsafe-eval' 'unsafe-inline';
+        script-src 'self' https://*.amap.com http://*.amap.com 'unsafe-inline' 'unsafe-eval' blob:;
+        style-src 'self' https://*.amap.com http://*.amap.com 'unsafe-inline';
+        img-src * data: blob:;
         connect-src *;
         font-src *;
         ">
@@ -24,44 +24,38 @@
 
     <body>
         <div id="background">
-            <div id="naviBar">
+            <div class="default" id="naviBar">
                 <div class="" id="listBtn">
                     <div id="indicator"></div>
                     <div id="mapIconContainer">
-                        <img src="../resourse/Map.svg" id="mapIcon"/>
+                        <img src="../../public/resourse/Map.svg" id="mapIcon"/>
                     </div>
                     <div class="listBtnChild" id="listIconContainer">
-                        <img src="../resourse/List.svg" id="listIcon"/>
+                        <img src="../../public/resourse/List.svg" id="listIcon"/>
                     </div>
                 </div>
                 <div id="editBtn">
-                    <img src="../resourse/Plus.svg" id="plusIcon"/>
+                    <img src="../../public/resourse/Plus.svg" id="plusIcon"/>
                 </div>
                 <div id="generate">
                     <div id="outCircle"></div>
                     <div id="midPoint"></div>
                 </div>
             </div>
-            <div id="midWindow">
+            <div class="default" id="midWindow">
                 <div id="searchBar">
                     <div id="startTimeContainer">
-                        <div class="time" id="startTime">1999/2/21</div>
-                        <div class="timeChooseBtn" id="startTimeChooseBtn">
-                            <img src="../resourse/Calendar.svg" class="calendar"/>
-                        </div>
+                        <input type="date" class="time" id="startTime"/>
                     </div>
 
                     <div id="endTimeContainer">
-                        <div class="time" id="endTime">2099/2/21</div>
-                        <div class="timeChooseBtn" id="startTimeChooseBtn">
-                            <img src="../resourse/Calendar.svg" class="calendar"/>
-                        </div>
+                        <input type="date" class="time" id="endTime"/>
                     </div>
                     <div id="searchBtn">
-                        <img src="../resourse/Search.svg" id="searchIcon"/>
+                        <img src="../../public/resourse/Search.svg" id="searchIcon"/>
                     </div>
                     <div id="refrashBtn">
-                        <img src="../resourse/Refresh ccw.svg" id="refrashIcon"/>
+                        <img src="../../public/resourse/Refresh ccw.svg" id="refrashIcon"/>
                     </div>
                 </div>
                 <div class="" id="mapContainer">
@@ -75,80 +69,60 @@
                     </div>
                     <table>
                         <tbody id="tableBody">
-                            <tr>
-                                <td>2025/6/18</td>
-                                <td>湖北省武汉市</td>
-                                <td>12345678</td>
-                            </tr>
-                            <tr>
-                                <td>2025/6/18</td>
-                                <td>湖北省武汉市</td>
-                                <td>12345678</td>
-                            </tr>
-                            <tr>
-                                <td>2025/6/18</td>
-                                <td>湖北省武汉市</td>
-                                <td>12345678</td>
-                            </tr>
-                            <tr>
-                                <td>2025/6/18</td>
-                                <td>湖北省武汉市</td>
-                                <td>12345678</td>
-                            </tr>
-                            <tr>
-                                <td>2025/6/18</td>
-                                <td>湖北省武汉市</td>
-                                <td>12345678</td>
-                            </tr>
                         </tbody>
                     </table>
                     <div class="underBtn" id="firstPage">
-                        <img src="../resourse/Chevrons left.svg" class="underIcon" id="firstIcon"/>
+                        <img src="../../public/resourse/Chevrons left.svg" class="underIcon" id="firstIcon"/>
                     </div>
                     <div class="underBtn" id="prevPage">
-                        <img src="../resourse/Chevron left.svg" class="underIcon" id="prevIcon"/>
+                        <img src="../../public/resourse/Chevron left.svg" class="underIcon" id="prevIcon"/>
                     </div>
                     <div id="pageNumbers" class="page-numbers">1 / --</div>
                     <div class="underBtn" id="nextPage">
-                        <img src="../resourse/Chevron right.svg" class="underIcon" id="nextIcon"/>
+                        <img src="../../public/resourse/Chevron right.svg" class="underIcon" id="nextIcon"/>
                     </div>
                     <div class="underBtn" id="lastPage">
-                        <img src="../resourse/Chevrons right.svg" class="underIcon" id="lastIcon"/>
+                        <img src="../../public/resourse/Chevrons right.svg" class="underIcon" id="lastIcon"/>
                     </div>
                 </div>
             </div>
             <div class="hidden" id="workEdit">
                 <div id="pictureContainer">
                     <div id="pictureDisplay">
+                        <div class="hidden" id="detailedMsg"></div>
+                        <textarea class="hidden" id="workContent"></textarea>
                         <img src="" class="hidden" id="workImg"/>
                     </div>
                     <div id="postPicture">
-                        <img src="../resourse/Arrow up.svg" class="underIcon" id="postIcon"/>
+                        <img src="../../public/resourse/Arrow up.svg" class="underIcon" id="postIcon"/>
                     </div>
-                    <div id="travelSwitch">
+                    <div class="" id="travelSwitch">
                         <div id="indicator2"></div>
-                        <div id="pctIconCtn">
-                            <img src="../resourse/Image.svg" class="underIcon" id="pctIcon"/>
+                        <div class="iconCtn" id="pctIconCtn">
+                            <img src="../../public/resourse/Image.svg" id="pctIcon"/>
                         </div>
-                        <div id="fileIconCtn">
-                            <img src="../resourse/File text.svg" class="underIcon" id="fileIcon"/>
+                        <div class="iconCtn" id="fileIconCtn">
+                            <img src="../../public/resourse/File text.svg" id="fileIcon"/>
                         </div>
                     </div>
                     <div id="maximize">
-                        <img src="../resourse/Maximize.svg" class="underIcon" id="maxIcon"/>
+                        <img src="../../public/resourse/Maximize.svg" class="underIcon" id="maxIcon"/>
                     </div>
                 </div>
                 <div class="workBtn" id="return">
-                    <img src="../resourse/Corner up-left.svg" class="underIcon" id="returnIcon"/>
+                    <img src="../../public/resourse/Corner up-left.svg" class="underIcon" id="returnIcon"/>
                 </div>
                 <div class="workBtn" id="showMsg">
-                    <img src="../resourse/Message square.svg" class="underIcon" id="msgIcon"/>
+                    <img src="../../public/resourse/Message square.svg" class="underIcon" id="msgIcon"/>
+                </div>
+                <div class="workBtn hidden" id="editWork">
+                    <img src="../../public/resourse/Edit.svg" class="underIcon" id="editIcon"/>
                 </div>
                 <div class="workBtn" id="saveWork">
-                    <img src="../resourse/Save.svg" class="underIcon" id="saveIcon"/>
+                    <img src="../../public/resourse/Save.svg" class="underIcon" id="saveIcon"/>
                 </div>
                 <div class="workBtn" id="delWork">
-                    <img src="../resourse/X.svg" class="underIcon" id="delIcon"/>
+                    <img src="../../public/resourse/X.svg" class="underIcon" id="delIcon"/>
                 </div>
             </div>
         </div>
@@ -156,6 +130,7 @@
             type="text/javascript"
             src="https://webapi.amap.com/maps?v=2.0&key=67c9233902f203462374f16c2ed76635"
         ></script>
+        <script src="https://webapi.amap.com/ui/1.1/main.js"></script>
         <script type="text/javascript" src="./render.js"></script>
     </body>
 </html>

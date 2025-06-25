@@ -2,35 +2,27 @@ var map = new AMap.Map("map", {
     zoom: 12
 })
 
-var geocoder
 var workId = 0
+var isStarted = false
+var navg = null
+var pathSimplifierIns = null
 
 // 分页配置
 const rowsPerPage = 5
 let currentPage = 1
 var filteredData = []
 
-var trip = {
-    picturePath: null,
-    lat: null,
-    lng: null,
-    detailedPos: null,
-    context: null
-}
-
-map.plugin('AMap.Geocoder', function() {
-    geocoder = new AMap.Geocoder()
-})
+var trip
 
 // DOM元素
+const naviBar = document.getElementById('naviBar')
+const midWindow = document.getElementById('midWindow')
 const tableBody = document.getElementById('tableBody')
 const prevPageBtn = document.getElementById('prevPage')
 const nextPageBtn = document.getElementById('nextPage')
 const firstPageBtn = document.getElementById('firstPage')
 const lastPageBtn = document.getElementById('lastPage')
-const currentPageEl = document.getElementById('currentPage')
-const totalPagesEl = document.getElementById('totalPages')
-const pageNumbersEl = document.getElementById('pageNumbers')
+const pageNumbers = document.getElementById('pageNumbers')
 const listBtn = document.getElementById('listBtn')
 const editBtn = document.getElementById('editBtn')
 const backBtn = document.getElementById('return')
@@ -44,14 +36,18 @@ const postPicture = document.getElementById('postPicture')
 const saveWork = document.getElementById('saveWork')
 const editWork = document.getElementById('editWork')
 const delWork = document.getElementById('delWork')
-
-console.log(listBtn)
+const travelSwitch = document.getElementById('travelSwitch')
+const detailedMsg = document.getElementById('detailedMsg')
+const showMsg = document.getElementById('showMsg')
+const startTime = document.getElementById('startTime')
+const endTime = document.getElementById('endTime')
+const searchBtn = document.getElementById('searchBtn')
+const refrashIcon = document.getElementById('refrashIcon')
 
 listBtn.addEventListener('click', function() {
     listContainer.classList.toggle('hidden')
     mapContainer.classList.toggle('hidden')
     listBtn.classList.toggle('active')
-    console.log(666)
 })
 
 editBtn.addEventListener('click', function() {
@@ -61,40 +57,96 @@ editBtn.addEventListener('click', function() {
 
 backBtn.addEventListener('click', function() {
     workEdit.classList.add('hidden');
+    naviBar.classList.add('default')
+    midWindow.classList.add('default')
 })
 
-// generate.addEventListener('click', function() {
-//     mapPage.classList.remove('hidden');
-//     workList.classList.add('hidden');
-// })
+generate.addEventListener('click', async function() {
+    if (mapContainer.getAttribute('class').indexOf('hidden') > -1) {
+        mapContainer.classList.remove('hidden')
+        listContainer.classList.add('hidden')
+        listBtn.classList.remove('active')
+    }
+    if (isStarted) {
+        isStarted = false
+        navg.stop()
+        navg.destroy()
+    } else {
+        isStarted = true
+        const path = []
+
+        for (const id of filteredData) {
+                try {
+                    const msgResponse = await elt.ipcRenderer.invoke('get-msg-by-id', id);
+                    const msg = msgResponse.data;
+                    
+                    if (!msg || !msg.gcjLon || !msg.gcjLat) {
+                        console.error(`Invalid coordinates for ID ${id}:`, msg);
+                        continue;
+                    }
+                    
+                    path.push([msg.gcjLon, msg.gcjLat]);
+                } catch (error) {
+                    console.error(`Error processing ID ${id}:`, error);
+                }
+            }
+
+        if (path.length > 0) {
+
+            AMapUI.load(['ui/misc/PathSimplifier'], function(PathSimplifier) {
+
+                if (!PathSimplifier.supportCanvas) {
+                    alert('当前环境不支持 Canvas！');
+                    return;
+                }
+
+                let pathSimplifierIns = new PathSimplifier({
+                    zIndex: 100,
+                    map: map,
+                    getPath: function(pathData, pathIndex) {
+                        return pathData.path;
+                    },
+                    renderOptions: {
+                        pathLineStyle: {
+                            strokeStyle: 'rgba(255,0,0,0)',
+                            lineWidth: 0,
+                        }
+                    }
+                });
+
+                pathSimplifierIns.setData([{
+                    name: '轨迹0',
+                    path: path
+                }]);
+
+                navg = pathSimplifierIns.createPathNavigator(0,
+                    {
+                        loop: true,
+                        speed: 1000
+                    });
+
+                navg.start();
+
+            });
+        }
+    }
+})
 
 postPicture.addEventListener('click', async function() {
   try {
-    trip.picturePath = await elt.ipcRenderer.invoke('file-open');
-    if (!trip.picturePath) return;
-    workImg.src = trip.picturePath;
-    
-    const imgMsg = await elt.ipcRenderer.invoke('post-img', trip.picturePath)
-    trip.lat = imgMsg.data.latitude
-    trip.lng = imgMsg.data.longitude
-    
-    if (trip.lat == null) {
-        trip.detailedPos = null
-    } else {
-        trip.detailedPos = await new Promise((resolve) => {
-        geocoder.getAddress([trip.lng, trip.lat], (status, result) => {
-            console.log(status)
-            console.log(result)
-          if (status === 'complete' && result.info == 'OK') {
-            resolve(result.regeocode.formattedAddress)
-          } else {
-            resolve(null) // 或 reject()
-          }
-        });
-      });
-    }
-    console.log('上传结果:', imgMsg);
-    console.log('详细地址:', trip.detailedPos)
+    let picturePath = await elt.ipcRenderer.invoke('file-open')
+    console.log(picturePath)
+    trip = (await elt.ipcRenderer.invoke('post-img', picturePath)).data
+    console.log(trip)
+    workImg.src = trip.previewPath
+    workImg.classList.remove('hidden')
+
+    detailedMsg.innerHTML = `
+        经度：${trip.longitude} <br/>
+        纬度：${trip.latitude} <br/>
+        拍摄地点：${trip.location} <br/>
+        制造商：${trip.make} <br/>
+        `
     } catch (err) {
         console.error('操作失败:', err)
     }
@@ -103,14 +155,33 @@ postPicture.addEventListener('click', async function() {
 saveWork.addEventListener('click', async function() {
     editWork.classList.remove('hidden')
     saveWork.classList.add('hidden')
-    trip.context = workContent.value
+    trip.content = workContent.value
     console.log(trip.context)
-    if (workId) {
-        const response = await elt.ipcRenderer.invoke('save-work', trip.picturePath, trip.detailedPos, trip.context)
+    if (!trip.id) {
+        const travelData = {
+            latitude: trip.latitude,
+            longitude: trip.longitude,
+            gcjLat: trip.gcjLat,
+            gcjLon: trip.gcjLon,
+            location: trip.location,
+            takenTime: trip.takenTime,
+            make: trip.make,
+            model: trip.model,
+            type: trip.type,
+            width: trip.width,
+            heigth: trip.heigth,
+            exposureTime: trip.exposureTime,
+            fnumber: trip.fnumber,
+            iso: trip.iso,
+            content: trip.content
+        }
+        const previewPath = trip.previewPath
+        const response = await elt.ipcRenderer.invoke('save-work', previewPath, travelData)
         console.log(response)
     } else {
-
+        console.log(123)
     }
+    init()
 })
 
 editWork.addEventListener('click', function() {
@@ -124,61 +195,63 @@ delWork.addEventListener('click', function() {
 
 })
 
+travelSwitch.addEventListener('click', function() {
+    workImg.classList.toggle('hidden')
+    workContent.classList.toggle('hidden')
+    travelSwitch.classList.toggle('active')
+})
+
+showMsg.addEventListener('click', function() {
+    detailedMsg.classList.toggle('hidden')
+})
+
+searchBtn.addEventListener('click', async function() {
+    const stTime = startTime.value
+    const edTime = endTime.value
+
+    if (stTime && edTime) {
+        const response = await elt.ipcRenderer.invoke('get-id-by-time', stTime, edTime).data
+        console.log(response)
+    } else {
+        alert('请先选择日期')
+    }
+})
+
 // 初始化
 async function init() {
-    return
     await loadData()
+    await loading()
     await renderTable()
     setupEventListeners()
     updatePagination()
 }
 
 async function loadData() {
+    filteredData = (await elt.ipcRenderer.invoke('get-all-id')).data
+}
+
+async function loading() {
     try {
-        const idsResponse = await elt.ipcRenderer.invoke('get-all-id');
-        filteredData = idsResponse.data;
-        
-        const path = [];
         const markers = [];
-        
         for (const id of filteredData) {
             try {
                 const msgResponse = await elt.ipcRenderer.invoke('get-msg-by-id', id);
                 const msg = msgResponse.data;
-                
-                console.log("Marker data:", msg);
                 
                 if (!msg || !msg.longitude || !msg.latitude) {
                     console.error(`Invalid coordinates for ID ${id}:`, msg);
                     continue;
                 }
                 
-                function getFileUrl(filePath) {
-                    let path = filePath.replace(/\\/g, '/');
-                    if (!path.startsWith('file://')) {
-                        path = `file:///${path}`;
-                    }
-                    return path;
-                }
-                
-                let icon = null;
-                if (msg.imagePath) {
-                    icon = new AMap.Icon({
-                        size: new AMap.Size(40, 50),
-                        image: getFileUrl(msg.imagePath),
-                        imageOffset: new AMap.Pixel(0, -60),
-                        imageSize: new AMap.Size(40, 50)
-                    });
-                }
-                
-                // 6. 创建标记
-                const marker = new AMap.Marker({
-                    position: new AMap.LngLat(Number(msg.longitude), 
-                    Number(msg.latitude)),
-                    icon: icon || undefined
+                let icon = new AMap.Icon({
+                    image: "../../public/resourse/Map pin.png",
                 });
                 
-                path.push([Number(msg.longitude), Number(msg.latitude)]);
+                const marker = new AMap.Marker({
+                    position: new AMap.LngLat(msg.gcjLon, msg.gcjLat),
+                    icon: icon,
+                    offset: new AMap.Pixel(-11, -25),
+                });
                 
                 marker.on('click', () => {
                     renderWork(id)
@@ -186,27 +259,14 @@ async function loadData() {
                 
                 map.add(marker);
                 markers.push(marker);
-                
+                            
+                if (markers.length > 0) {
+                    map.setFitView(markers);
+                }
             } catch (error) {
                 console.error(`Error processing ID ${id}:`, error);
             }
         }
-        
-        if (path.length > 0) {
-            const polyline = new AMap.Polyline({
-                path: path,
-                strokeColor: "#3366FF",
-                strokeWeight: 5,
-                strokeStyle: "solid",
-                lineJoin: 'round'
-            });
-            map.add(polyline);
-        }
-        
-        if (markers.length > 0) {
-            map.setFitView(markers);
-        }
-        
     } catch (error) {
         console.error("Error in loadData:", error);
     }
@@ -214,22 +274,20 @@ async function loadData() {
 
 // 渲染表格
 async function renderTable() {
-    console.log(1)
     tableBody.innerHTML = '';
     
     const startIndex = (currentPage - 1) * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
     const pageData = filteredData.slice(startIndex, endIndex);
     
-    pageData.forEach(async id => {
-        console.log(id)
+    for(const id of pageData) {
         const response = await elt.ipcRenderer.invoke('get-msg-by-id', id)
         const msg = response.data
         console.log(msg)
         const tr = document.createElement('tr');
         
         tr.innerHTML = `
-            <td>${msg.takeTime}</td>
+            <td>${String(msg.takenTime)}</td>
             <td>${msg.location}</td>
             <td>${msg.content}</td>
         `;
@@ -239,11 +297,10 @@ async function renderTable() {
         })
         
         tableBody.appendChild(tr);
-    });
+    }
     
     // 更新分页信息
-    currentPageEl.textContent = currentPage;
-    totalPagesEl.textContent = Math.ceil(filteredData.length / rowsPerPage);
+    pageNumbers.textContent = `${currentPage} / ${Math.ceil(filteredData.length / rowsPerPage)}`
 }
 
 // 设置事件监听器
@@ -288,9 +345,6 @@ function updatePagination() {
     firstPageBtn.disabled = currentPage === 1;
     lastPageBtn.disabled = currentPage === totalPages;
     
-    // 生成页码按钮
-    pageNumbersEl.innerHTML = '';
-    
     const maxVisiblePages = 5;
     let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
     let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
@@ -299,23 +353,20 @@ function updatePagination() {
     if (endPage - startPage + 1 < maxVisiblePages) {
         startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
-    
-    for (let i = startPage; i <= endPage; i++) {
-        const pageBtn = document.createElement('button');
-        pageBtn.textContent = i;
-        pageBtn.classList.toggle('active', i === currentPage);
-        pageBtn.addEventListener('click', () => goToPage(i));
-        pageNumbersEl.appendChild(pageBtn);
-    }
 }
 
 // 加载游记编辑界面
 async function renderWork(id) {
     workId = id
+    naviBar.classList.remove('default')
+    midWindow.classList.remove('default')
     workEdit.classList.remove('hidden')
+    detailedMsg.classList.add('hidden')
+    travelSwitch.classList.remove('active')
     if (!id) {
         /*-----------界面修改-----------*/
         workImg.classList.add('hidden')
+        workContent.classList.add('hidden')
         saveWork.classList.remove('hidden')
         editWork.classList.add('hidden')
         workContent.removeAttribute('readonly', true)
@@ -325,9 +376,11 @@ async function renderWork(id) {
         /*-----------数据修改-----------*/
         workContent.value = ""
         workImg.src = ""
+        detailedMsg.innerHTML = ''
     } else {
         /*-----------界面修改-----------*/
         workImg.classList.remove('hidden')
+        workContent.classList.add('hidden')
         saveWork.classList.add('hidden')
         editWork.classList.remove('hidden')
         workContent.setAttribute('readonly', true)
@@ -339,8 +392,12 @@ async function renderWork(id) {
         const msg = response.data
         workImg.src = msg.imagePath
         workContent.value = msg.content
-        trip.picturePath = msg.imagePath
-        trip.detailedPos = msg.location
+        detailedMsg.innerHTML = `
+            经度：${msg.longitude} <br/>
+            纬度：${msg.latitude} <br/>
+            拍摄地点：${msg.location} <br/>
+            制造商：${msg.make} <br/>
+            `
     }
 }
 
