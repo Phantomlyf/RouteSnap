@@ -12,6 +12,7 @@
 
     <select id="selectIds" resultType="integer">
         select ID from TB_TRAVEL
+        ORDER BY TAKEN_TIME DESC
     </select>
 
     <select id="selectById"  parameterType="integer"  resultType="com.skymmer.pojo.Travel">

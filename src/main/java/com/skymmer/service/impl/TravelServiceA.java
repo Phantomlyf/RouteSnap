@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -143,6 +144,21 @@ public class TravelServiceA implements TravelService {
 
     @Override
     public void deleteById(Integer id){
+        Travel travel = travelMapper.selectById(id);
+        String imagePath = travel.getImagePath();
+        // 指定文件路径
+        Path path = Paths.get(imagePath);
+        try {
+            // 删除文件
+            Files.delete(path);
+            System.out.println("文件已成功删除");
+        } catch (NoSuchFileException e) {
+            System.out.println("文件不存在");
+        } catch (DirectoryNotEmptyException e) {
+            System.out.println("该目录非空");
+        } catch (IOException e) {
+            System.out.println("删除文件时发生错误: " + e.getMessage());
+        }
         travelMapper.deleteById(id);
     }
 }

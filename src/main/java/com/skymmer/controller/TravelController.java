@@ -120,13 +120,8 @@ public class TravelController {
 
     @PutMapping("/change/{id}")
     public Result changeLonLat(@PathVariable Integer id,
-                               @RequestParam Double lat,
-                               @RequestParam Double lon,
                                @RequestParam String content){
         try {
-            if(lat != null && lon != null){
-                travelService.updateLonLat(id,lat,lon);
-            }
             if(content != null){
                 travelService.updateContent(id,content);
             }
