@@ -6,7 +6,7 @@
 
 
     <insert id="insert" parameterType="com.skymmer.pojo.Travel" keyProperty = "id" useGeneratedKeys = "true">
-        insert into TB_TRAVEL(IMAGE_PATH, LATITUDE, LONGITUDE,GCJ_LAT,gcj_lon, TAKEN_TIME, LOCATION, CONTENT, MAKE, MODEL, TYPE, WIDTH, HEIGHT, FNUMBER, EXPOSURE_TIME, ISO)
+        insert into TB_TRAVEL(IMAGE_PATH, LATITUDE, LONGITUDE,GCJ_LAT,GCJ_LON, TAKEN_TIME, LOCATION, CONTENT, MAKE, MODEL, TYPE, WIDTH, HEIGHT, FNUMBER, EXPOSURE_TIME, ISO)
         values (#{imagePath},#{latitude},#{longitude},#{gcjLat},#{gcjLon},#{takenTime},#{location},#{content},#{make},#{model},#{type},#{width},#{height},#{fnumber},#{exposureTime},#{iso})
     </insert>
 
@@ -27,8 +27,8 @@
         select ID,TAKEN_TIME,LOCATION,CONTENT from  TB_TRAVEL
     </select>
 
-    <select id="selectByCase" resultType="com.skymmer.pojo.Travel">
-        select * from TB_TRAVEL
+    <select id="selectByCase" resultType = "integer">
+        select ID from TB_TRAVEL
         <where>
             <if test="start != null and end != null">
                 TAKEN_TIME between #{start} and #{end}
@@ -37,10 +37,11 @@
                 and LOCATION like concat('%', #{location}, '%')
             </if>
         </where>
+        ORDER BY TAKEN_TIME ASC
     </select>
 
-    <select id="genTra" resultType="com.skymmer.pojo.GpsInfo">
-        select LATITUDE, LONGITUDE from TB_TRAVEL
+    <select id="genTra" resultType="integer">
+        select  ID from TB_TRAVEL
         <where>
             <if test="start != null">
                 TAKEN_TIME &gt;= #{start}
@@ -51,6 +52,16 @@
         </where>
         ORDER BY TAKEN_TIME ASC
     </select>
+
+    <update id="updateLonLat">
+        update TB_TRAVEL set LATITUDE = #{lat}, LONGITUDE = #{lon},
+                            GCJ_LAT = #{gcjLat}, GCJ_LON = #{gcjLon}
+                            where ID =#{id}
+    </update>
+
+    <update id="updateContent">
+        update TB_TRAVEL set CONTENT = #{content} where ID = #{id}
+    </update>
 
 
 

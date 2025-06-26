@@ -66,7 +66,8 @@ public class ImageController {
                 System.out.println("生成预览地址");
                 previewPath = imageConverter.previewHeic(file);
             }
-            ImageInfo imageInfo = new ImageInfo(previewPath, latitude, longitude,GCJ_lat,GCJ_lon,location,takenTime, make, model, type, width, height, fnumber, exposureTime, iso);
+            //文件流上传，不知道原始路径。
+            ImageInfo imageInfo = new ImageInfo(null, previewPath, latitude, longitude,GCJ_lat,GCJ_lon,location,takenTime, make, model, type, width, height, fnumber, exposureTime, iso);
             return Result.success(imageInfo);
         }
     }
@@ -74,13 +75,11 @@ public class ImageController {
     @GetMapping("/upload")
     public Result uploadImagePath(@RequestParam String imagePath) throws Exception{
         String decodedPath = URLDecoder.decode(imagePath, StandardCharsets.UTF_8);
-        System.out.println(decodedPath);
         //获取扩展名
         int index = decodedPath.lastIndexOf('.');
         String extname = decodedPath.substring(index+1);
         String extnameLowerCase = extname.toLowerCase();
         String contentType = "image/"+extnameLowerCase;
-        System.out.println(contentType);
 
         if(!imageStorageProperties.getAllowedTypes().contains(contentType)){
             return Result.error(1001,"图片上传类型错误");
@@ -111,13 +110,12 @@ public class ImageController {
 
         String previewPath =  null;
         if(contentType.equals("image/heic") || contentType.equals("image/heif")){
-            System.out.println("生成预览地址");
             previewPath = imageConverter.previewHeic(decodedPath);
         }
         else{
             previewPath = decodedPath;
         }
-        ImageInfo imageInfo = new ImageInfo(previewPath, latitude, longitude,GCJ_lat, GCJ_lon,location, takenTime, make, model, type, width, height, fnumber, exposureTime, iso);
+        ImageInfo imageInfo = new ImageInfo(decodedPath,previewPath, latitude, longitude,GCJ_lat, GCJ_lon,location, takenTime, make, model, type, width, height, fnumber, exposureTime, iso);
         System.out.println(imageInfo);
         return Result.success(imageInfo);
     }

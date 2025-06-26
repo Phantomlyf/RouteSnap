@@ -24,7 +24,13 @@ public interface TravelService {
 
     List<ListInfo> listShort(Integer page);
 
-    List<Travel> selectTravel(LocalDateTime startTime,LocalDateTime endTime,String location);
+    List<Integer> selectTravel(LocalDateTime startTime,LocalDateTime endTime,String location);
 
-    List<GpsInfo> genTra(Timestamp start, Timestamp end);
+    List<Integer> genTra(Timestamp start, Timestamp end);
+
+    void updateLonLat(Integer id, Double lat,Double lon);
+
+    void updateContent(Integer id,String Content);
+
+    void deleteById(Integer id);
 }

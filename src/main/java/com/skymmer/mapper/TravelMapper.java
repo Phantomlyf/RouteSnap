@@ -4,11 +4,10 @@ package com.skymmer.mapper;
 import com.skymmer.pojo.GpsInfo;
 import com.skymmer.pojo.ListInfo;
 import com.skymmer.pojo.Travel;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.cglib.core.Local;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -22,7 +21,7 @@ public interface TravelMapper {
 
     List<Integer> selectIds();
 
-    List<Travel> selectByCase(@Param("start") Timestamp start,
+    List<Integer> selectByCase(@Param("start") Timestamp start,
                         @Param("end") Timestamp end,
                         @Param("location") String location);
 
@@ -32,13 +31,27 @@ public interface TravelMapper {
 
     List<ListInfo> selectShortInfos();
 
-    List<GpsInfo> genTra(@Param("start") Timestamp start,
+    List<Integer> genTra(@Param("start") Timestamp start,
                          @Param("end") Timestamp end);
+
+    void updateLonLat(@Param("id") Integer id,
+                      @Param("lat") Double lat,
+                      @Param("lon") Double lon,
+                      @Param("gcjLat") Double gcjLat,
+                      @Param("gcjLon") Double gcjLon);
+
+    void updateContent(@Param("id") Integer id,
+                       @Param("content") String content);
+
+    @Delete("delete from TB_TRAVEL where  ID = #{id}")
+    void deleteById(@Param("id")Integer id);
 
     @Select("select * from TB_TRAVEL")
     List<Travel> selectALl();
 
     @Select("select IMAGE_PATH as imagePath from TB_TRAVEL")
     List<String> selectPath();
+
+
 }
 

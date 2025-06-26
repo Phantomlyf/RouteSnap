@@ -43,5 +43,5 @@ app:
 
 #分页参数配置
 page:
-  pageSize: 8
+  pageSize: 10
 

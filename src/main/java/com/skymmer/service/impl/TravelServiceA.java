@@ -78,18 +78,11 @@ public class TravelServiceA implements TravelService {
 
     @Autowired
     GetLocationUtils getLocationUtils;
+
     @Override
     public int upload(String previewPath,Travel travel) throws Exception {
         String imagePath;
-        if(travel.getType().equals("image/heic") || travel.getType().equals("image/heif")){
-            imagePath = imageStorageUtils.StorageHeif(previewPath);
-        }
-        else{
-            imagePath = imageStorageUtils.StorageImage(previewPath);
-        }
-        if(travel.getGcjLat() != null && travel.getGcjLon()!=null){
-            getLocationUtils.getLocation(travel.getGcjLat(), travel.getLatitude());
-        }
+        imagePath = imageStorageUtils.StorageImage(previewPath);
         travel.setImagePath(imagePath);
         travelMapper.insert(travel);
         return  travel.getId();
@@ -122,18 +115,34 @@ public class TravelServiceA implements TravelService {
     }
 
     @Override
-    public List<Travel> selectTravel(LocalDateTime startTime, LocalDateTime endTime, String location) {
+    public List<Integer> selectTravel(LocalDateTime startTime, LocalDateTime endTime, String location) {
         Timestamp start = Timestamp.valueOf(startTime);
         Timestamp end = Timestamp.valueOf(endTime);
-        List<Travel> selectedTravels = travelMapper.selectByCase(start, end, location);
+        List<Integer> selectedTravels = travelMapper.selectByCase(start, end, location);
         return  selectedTravels;
     }
 
     @Override
-    public List<GpsInfo> genTra(Timestamp start, Timestamp end) {
-        List<GpsInfo> list=travelMapper.genTra(start,end);
+    public List<Integer> genTra(Timestamp start, Timestamp end) {
+        List<Integer> list=travelMapper.genTra(start,end);
         return list;
     }
 
+    @Override
+    public void updateLonLat(Integer id, Double gcjLat, Double gcjLon) {
+        double[] gps84 = gpsConverter.gcj02_To_Gps84(gcjLat, gcjLon);
+        Double lat = gpsConverter.retain6(gps84[0]);
+        Double lon =gpsConverter.retain6(gps84[1]);
+        travelMapper.updateLonLat(id,lat,lon,gcjLat,gcjLon);
+    }
 
+    @Override
+    public void updateContent(Integer id, String content) {
+        travelMapper.updateContent(id,content);
+    }
+
+    @Override
+    public void deleteById(Integer id){
+        travelMapper.deleteById(id);
+    }
 }

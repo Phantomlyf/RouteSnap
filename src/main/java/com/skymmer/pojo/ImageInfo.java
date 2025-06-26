@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImageInfo {
+    private String rawPath;
     private String previewPath;
     private Double latitude;
     private Double longitude;

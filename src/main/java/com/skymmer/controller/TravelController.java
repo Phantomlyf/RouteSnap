@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.skymmer.pojo.Result;
 
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,9 +45,11 @@ public class TravelController {
 
     @PostMapping("/upload2")
     public Result uploadTravel(@RequestParam String previewPath, @RequestBody Travel travel ){
+        String decodedPath = URLDecoder.decode(previewPath, StandardCharsets.UTF_8);
+        System.out.println(decodedPath);
         int id = 0;
         try {
-            id = travelService.upload(previewPath,travel);
+            id = travelService.upload(decodedPath,travel);
             if(id>0){
                 return Result.success(id);
             }
@@ -104,15 +108,44 @@ public class TravelController {
 
 
 
-    @GetMapping("listBycase")
+    @GetMapping("/listBycase")
     public Result selectTravel(@RequestParam(required=false) String startTime,
                                @RequestParam(required=false) String endTime,
                                @RequestParam(required=false) String location){
         LocalDateTime start = DateConverter.convertToLocalDateTime(startTime);
         LocalDateTime end = DateConverter.convertToLocalDateTime(endTime);
-        List<Travel> travels = travelService.selectTravel(start,end,location);
+        List<Integer> travels = travelService.selectTravel(start,end,location);
         return Result.success(travels);
     }
+
+    @PutMapping("/change/{id}")
+    public Result changeLonLat(@PathVariable Integer id,
+                               @RequestParam Double lat,
+                               @RequestParam Double lon,
+                               @RequestParam String content){
+        try {
+            if(lat != null && lon != null){
+                travelService.updateLonLat(id,lat,lon);
+            }
+            if(content != null){
+                travelService.updateContent(id,content);
+            }
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error(1106,"游记修改失败");
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public Result deleteTravel(@PathVariable Integer id){
+        try {
+            travelService.deleteById(id);
+            return Result.success();
+        } catch (Exception e) {
+           return Result.error(1107,"游记删除失败");
+        }
+    }
+
 
 
 }
