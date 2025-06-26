@@ -11,6 +11,7 @@ var pathSimplifierIns = null
 const rowsPerPage = 5
 let currentPage = 1
 var filteredData = []
+var idToMarker
 
 var trip
 
@@ -42,7 +43,7 @@ const showMsg = document.getElementById('showMsg')
 const startTime = document.getElementById('startTime')
 const endTime = document.getElementById('endTime')
 const searchBtn = document.getElementById('searchBtn')
-const refrashIcon = document.getElementById('refrashIcon')
+const refrashBtn = document.getElementById('refrashBtn')
 
 listBtn.addEventListener('click', function() {
     listContainer.classList.toggle('hidden')
@@ -56,7 +57,7 @@ editBtn.addEventListener('click', function() {
 })
 
 backBtn.addEventListener('click', function() {
-    workEdit.classList.add('hidden');
+    workEdit.classList.add('hidden')
     naviBar.classList.add('default')
     midWindow.classList.add('default')
 })
@@ -75,21 +76,21 @@ generate.addEventListener('click', async function() {
         isStarted = true
         const path = []
 
-        for (const id of filteredData) {
-                try {
-                    const msgResponse = await elt.ipcRenderer.invoke('get-msg-by-id', id);
-                    const msg = msgResponse.data;
-                    
-                    if (!msg || !msg.gcjLon || !msg.gcjLat) {
-                        console.error(`Invalid coordinates for ID ${id}:`, msg);
-                        continue;
-                    }
-                    
-                    path.push([msg.gcjLon, msg.gcjLat]);
-                } catch (error) {
-                    console.error(`Error processing ID ${id}:`, error);
+        for (const id of [...filteredData].reverse()) {
+            try {
+                const msgResponse = await elt.ipcRenderer.invoke('get-msg-by-id', id);
+                const msg = msgResponse.data;
+                
+                if (!msg || !msg.gcjLon || !msg.gcjLat) {
+                    console.error(`Invalid coordinates for ID ${id}:`, msg);
+                    continue;
                 }
+                
+                path.push([msg.gcjLon, msg.gcjLat]);
+            } catch (error) {
+                console.error(`Error processing ID ${id}:`, error);
             }
+        }
 
         if (path.length > 0) {
 
@@ -147,6 +148,36 @@ postPicture.addEventListener('click', async function() {
         拍摄地点：${trip.location} <br/>
         制造商：${trip.make} <br/>
         `
+
+    if (!trip.gcjLon || !trip.gcjLat) {
+        trip.gcjLon = 116.3912
+        trip.gcjLat = 39.9
+    }
+
+    let icon = new AMap.Icon({
+        image: "../../public/resourse/Map pin.png",
+    });
+    
+    const marker = new AMap.Marker({
+        position: new AMap.LngLat(trip.gcjLon, trip.gcjLat),
+        icon: icon,
+        offset: new AMap.Pixel(-11, -25),
+        draggable: true,
+        cursor: 'move',
+    });
+
+    marker.on('dragend', function(e) {
+        const position = e.target.getPosition();
+        trip.gcjLat = position.lat
+        trip.gcjLon = position.lng
+        console.log(position.lng, position.lat);
+    });
+
+    map.add(marker)
+    map.setFitView(marker)
+
+    travelSwitch.style.pointerEvents = 'auto'
+    showMsg.classList.remove('disable')
     } catch (err) {
         console.error('操作失败:', err)
     }
@@ -156,7 +187,7 @@ saveWork.addEventListener('click', async function() {
     editWork.classList.remove('hidden')
     saveWork.classList.add('hidden')
     trip.content = workContent.value
-    console.log(trip.context)
+    console.log(trip.content)
     if (!trip.id) {
         const travelData = {
             latitude: trip.latitude,
@@ -179,7 +210,8 @@ saveWork.addEventListener('click', async function() {
         const response = await elt.ipcRenderer.invoke('save-work', previewPath, travelData)
         console.log(response)
     } else {
-        console.log(123)
+        const response = await elt.ipcRenderer.invoke('edit-work', workId, trip.content)
+        console.log(response)
     }
     init()
 })
@@ -187,12 +219,19 @@ saveWork.addEventListener('click', async function() {
 editWork.addEventListener('click', function() {
     editWork.classList.add('hidden')
     saveWork.classList.remove('hidden')
-    postPicture.removeAttribute('disabled', true)
+    postPicture.classList.remove('disable')
     workContent.removeAttribute('readonly', true)
 })
 
-delWork.addEventListener('click', function() {
-
+delWork.addEventListener('click', async function() {
+    if (workId) {
+        const response = await elt.ipcRenderer.invoke('del-work', workId)
+        console.log(response)
+        workEdit.classList.add('hidden')
+        naviBar.classList.add('default')
+        midWindow.classList.add('default')
+        init()
+    }
 })
 
 travelSwitch.addEventListener('click', function() {
@@ -210,11 +249,16 @@ searchBtn.addEventListener('click', async function() {
     const edTime = endTime.value
 
     if (stTime && edTime) {
-        const response = await elt.ipcRenderer.invoke('get-id-by-time', stTime, edTime).data
-        console.log(response)
+        filteredData = (await elt.ipcRenderer.invoke('get-id-by-time', stTime, edTime)).data
+        await loading()
+        await renderTable()
     } else {
         alert('请先选择日期')
     }
+})
+
+refrashBtn.addEventListener('click', function() {
+    init()
 })
 
 // 初始化
@@ -232,7 +276,8 @@ async function loadData() {
 
 async function loading() {
     try {
-        const markers = [];
+        const markers = []
+        idToMarker = new Map()
         for (const id of filteredData) {
             try {
                 const msgResponse = await elt.ipcRenderer.invoke('get-msg-by-id', id);
@@ -252,6 +297,8 @@ async function loading() {
                     icon: icon,
                     offset: new AMap.Pixel(-11, -25),
                 });
+
+                idToMarker.set(id, marker)
                 
                 marker.on('click', () => {
                     renderWork(id)
@@ -370,8 +417,10 @@ async function renderWork(id) {
         saveWork.classList.remove('hidden')
         editWork.classList.add('hidden')
         workContent.removeAttribute('readonly', true)
-        postPicture.removeAttribute('disabled', true)
-        delWork.setAttribute('disabled', true)
+        postPicture.classList.remove('disable')
+        delWork.classList.add('disable')
+        travelSwitch.style.pointerEvents = 'none'
+        showMsg.classList.add('disable')
 
         /*-----------数据修改-----------*/
         workContent.value = ""
@@ -384,19 +433,22 @@ async function renderWork(id) {
         saveWork.classList.add('hidden')
         editWork.classList.remove('hidden')
         workContent.setAttribute('readonly', true)
-        postPicture.setAttribute('disabled', true)
-        delWork.removeAttribute('disabled', true)
+        postPicture.classList.add('disable')
+        delWork.classList.remove('disable')
+        travelSwitch.style.pointerEvents = 'auto'
+        showMsg.classList.remove('disable')
+        map.setFitView(idToMarker.get(id))
 
         /*-----------数据修改-----------*/
         const response = await elt.ipcRenderer.invoke('get-msg-by-id', id)
-        const msg = response.data
-        workImg.src = msg.imagePath
-        workContent.value = msg.content
+        trip = response.data
+        workImg.src = trip.imagePath
+        workContent.value = trip.content
         detailedMsg.innerHTML = `
-            经度：${msg.longitude} <br/>
-            纬度：${msg.latitude} <br/>
-            拍摄地点：${msg.location} <br/>
-            制造商：${msg.make} <br/>
+            经度：${trip.longitude} <br/>
+            纬度：${trip.latitude} <br/>
+            拍摄地点：${trip.location} <br/>
+            制造商：${trip.make} <br/>
             `
     }
 }

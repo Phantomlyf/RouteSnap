@@ -34,5 +34,7 @@ app.on('ready', () => {
     ipcMain.handle('get-all-id', axiosApi.getAllId)
     ipcMain.handle('get-msg-by-id', axiosApi.getMsgById)
     ipcMain.handle('get-id-by-time', axiosApi.getIdByTime)
+    ipcMain.handle('del-work', axiosApi.delWork)
+    ipcMain.handle('edit-work', axiosApi.editWork)
     win.loadFile('src/pages/index.html')
 })

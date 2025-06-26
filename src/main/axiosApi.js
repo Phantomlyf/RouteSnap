@@ -20,7 +20,8 @@ async function postImg(_, filePath) {
 
 async function saveWork(_, previewPath, travelData) {
     try {
-        const response = await axios.post(`http://localhost:4399/travel/upload2?previewPath=${previewPath}`, travelData, {
+        const encodedPath = encodeURIComponent(previewPath.replace(/\\/g, '/'))
+        const response = await axios.post(`http://localhost:4399/travel/upload2?previewPath=${encodedPath}`, travelData, {
             headers: {
                  'Content-Type': 'application/json'
             }
@@ -55,7 +56,8 @@ async function getMsgById(_, id) {
 
 async function getIdByTime(_, stTime, edTime) {
     try {
-        const response = await axios.post(`${urlPath}/genTra?startTime=${stTime}&endTime=${edTime}`)
+        const response = await axios.get(`${urlPath}/travel/listBycase?startTime=${stTime}&endTime=${edTime}`)
+        console.log(response.data)
         return response.data
     } catch(e) {
         console.error(e)
@@ -63,6 +65,32 @@ async function getIdByTime(_, stTime, edTime) {
     }
 }
 
+async function delWork(_, id) {
+    try {
+        const response = await axios.delete(`${urlPath}/travel/delete/${id}`)
+        return response.data
+    } catch(e) {
+        console.error(e)
+        return {error : e.message}
+    }
+}
+
+async function editWork(_, id, content) {
+    try {
+        console.log(id, content)
+        const response = await axios.put(`${urlPath}/travel/change`, {
+            id: id,
+            content: content
+        }, {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        })
+        return response.data
+    } catch(e) {
+        console.error(e)
+        return {error: e.message}
+    }
+}
+
 module.exports = {
-    postImg, saveWork, getAllId, getMsgById, getIdByTime
+    postImg, saveWork, getAllId, getMsgById, getIdByTime, delWork, editWork
 }
