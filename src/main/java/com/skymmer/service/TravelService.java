@@ -33,4 +33,7 @@ public interface TravelService {
     void updateContent(Integer id,String Content);
 
     void deleteById(Integer id);
+
+
+    void exportTravel(Integer id, boolean isRetainLocation, boolean isRetainTime, boolean isRetainParams, String exportType, String exportPath) throws IOException;
 }

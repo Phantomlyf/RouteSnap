@@ -29,8 +29,9 @@ mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
-# 图片存储配置
+
 app:
+  # 图片存储配置
   storage:
     imageDir: "D:/AAA/image"
     maxSizeMB: 10     # 最大图片大小
@@ -40,8 +41,13 @@ app:
     baseUrl: "http://localhost/4399"
     cleanup-delay-minutes: 30
     temp-dir: "D:/AAA/temp"
+  # 游记导出配置
+  export:
+    outputDir: "D:/AAA/output"
 
 #分页参数配置
 page:
   pageSize: 10
+
+
 

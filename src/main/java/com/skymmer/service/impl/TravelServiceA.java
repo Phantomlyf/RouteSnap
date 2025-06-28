@@ -31,6 +31,8 @@ public class TravelServiceA implements TravelService {
     ImageThumbnailGenerator imageThumbnailGenerator;
     @Autowired
     GpsConverter gpsConverter;
+    @Autowired
+    FileExport fileExport;
 
     @Value("${page.pageSize}")
     private Integer pageSize;
@@ -85,6 +87,12 @@ public class TravelServiceA implements TravelService {
         String imagePath;
         imagePath = imageStorageUtils.StorageImage(previewPath);
         travel.setImagePath(imagePath);
+        //没有提取到图片位置信息，根据用户自定义补全
+        if(travel.getLatitude() == null || travel.getLongitude() == null ){
+            double[] gps84 = gpsConverter.gcj02_To_Gps84(travel.getGcjLat(), travel.getGcjLon());
+            travel.setLatitude(gpsConverter.retain6(gps84[0]));
+            travel.setLongitude(gpsConverter.retain6(gps84[1]));
+        }
         travelMapper.insert(travel);
         return  travel.getId();
     }
@@ -160,5 +168,17 @@ public class TravelServiceA implements TravelService {
             System.out.println("删除文件时发生错误: " + e.getMessage());
         }
         travelMapper.deleteById(id);
+    }
+
+    @Override
+    public void exportTravel(Integer id, boolean isRetainLocation, boolean isRetainTime, boolean isRetainParams, String exportType, String  exportPath) throws IOException {
+        Travel travel = travelMapper.selectById(id);
+        if(exportType.equals("PDF")){
+            fileExport.exportToPDF(isRetainLocation,isRetainTime,isRetainParams,travel,exportPath);
+        }
+        else if(exportType.equals("PNG")){
+            fileExport.exportToPNG(isRetainLocation,isRetainTime,isRetainParams,travel,exportPath);
+        }
+
     }
 }

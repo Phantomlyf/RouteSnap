@@ -141,6 +141,23 @@ public class TravelController {
         }
     }
 
+    @GetMapping("/export")
+    public Result exportTravel(
+            @RequestParam Integer id,
+            @RequestParam boolean isRetainLocation,
+            @RequestParam boolean isRetainTime,
+            @RequestParam boolean isRetainParams,
+            @RequestParam String  exportType,
+            @RequestParam String  exportPath
+    ){
+        try {
+            travelService.exportTravel(id,isRetainLocation,isRetainTime,isRetainParams,exportType,exportPath);
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error(1108,"游记导出失败");
+        }
+    }
+
 
 
 }

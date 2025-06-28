@@ -1,5 +1,8 @@
 package com.skymmer;
 
+import com.skymmer.mapper.TravelMapper;
+import com.skymmer.pojo.Travel;
+import com.skymmer.utils.FileExport;
 import com.skymmer.utils.GetLocationUtils;
 import com.skymmer.utils.GpsConverter;
 
@@ -27,6 +30,25 @@ public class TestUtils {
 
         String body = getLocationUtils.getLocation(gcjlat,gcjlon);
         System.out.println(body);
+
+    }
+
+    @Autowired
+    TravelMapper travelMapper;
+
+    @Autowired
+    FileExport fileExport;
+
+    @Test
+    public void testExportToPDF() throws IOException {
+        Travel travel = travelMapper.selectById(1);
+        fileExport.exportToPDF(true,true,true,travel,null);
+    }
+
+    @Test
+    public void testExportToPNG() throws IOException {
+        Travel travel = travelMapper.selectById(1);
+        fileExport.exportToPNG(true,true,true,travel,null);
 
     }
 }
