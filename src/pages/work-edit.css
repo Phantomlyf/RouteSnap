@@ -89,6 +89,10 @@
     box-shadow: 0 0 8px 0 #ffffff60;
 }
 
+#postPicture.disable {
+    background-color: #909090;
+}
+
 #postIcon {
     width: 60%;
 }
@@ -176,7 +180,7 @@
     filter: drop-shadow(-100px 0 0 #000);
 }
 
-#maximize {
+#download {
     position: absolute;
     left: 83%;
     top: 92.5%;
@@ -189,12 +193,16 @@
     transition: 0.3s;
 }
 
-#maximize:hover {
+#download:hover {
     width: 13%;
     box-shadow: 0 0 8px 0 #ffffff60;
 }
 
-#maxIcon {
+#download.disable {
+    background-color: #909090;
+}
+
+#downIcon {
     width: 50%;
 }
 
@@ -213,6 +221,7 @@
 .workBtn:hover {
     width: 12%;
     box-shadow: 0 0 8px 0 #33993360;
+    cursor: pointer;
 }
 
 .workBtn.disable {

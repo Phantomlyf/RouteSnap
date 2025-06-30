@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>index</title>
+        <title>routesnap</title>
         <meta http-equiv="Content-Security-Policy" content="
         default-src 'self' https://*.amap.com http://*.amap.com http://*.autonavi.com 'unsafe-eval' 'unsafe-inline';
         script-src 'self' https://*.amap.com http://*.amap.com 'unsafe-inline' 'unsafe-eval' blob:;
@@ -14,6 +14,8 @@
         <link rel="stylesheet" type="text/css" href="./mid-window.css">
         <link rel="stylesheet" type="text/css" href="./bar.css">
         <link rel="stylesheet" type="text/css" href="./work-edit.css">
+        <link rel="stylesheet" type="text/css" href="./confirm.css">
+        <link rel="stylesheet" type="text/css" href="./download.css">
         <link rel="stylesheet" type="text/css" href="./style.css">
         <script type="text/javascript">
             window._AMapSecurityConfig = {
@@ -105,8 +107,8 @@
                             <img src="../../public/resourse/File text.svg" id="fileIcon"/>
                         </div>
                     </div>
-                    <div id="maximize">
-                        <img src="../../public/resourse/Maximize.svg" class="underIcon" id="maxIcon"/>
+                    <div id="download">
+                        <img src="../../public/resourse/Download.svg" class="underIcon" id="downIcon"/>
                     </div>
                 </div>
                 <div class="workBtn" id="return">
@@ -123,6 +125,80 @@
                 </div>
                 <div class="workBtn" id="delWork">
                     <img src="../../public/resourse/X.svg" class="underIcon" id="delIcon"/>
+                </div>
+            </div>
+            <div id="confirmWindow">
+                <div id="confirm">
+                    <div id="upContent">
+                        <div id="warningIconCtn">
+                            <img src="../../public/resourse/Alert triangle.svg" id="warningIcon"/>
+                        </div>
+                        <p>确定要删除此篇游记吗？</p>
+                    </div>
+                    <div class="workBtn" id="cfRtnBtn">
+                        <img src="../../public/resourse/Corner up-left.svg" class="underIcon"/>
+                    </div>
+                    <div class="workBtn" id="cfBtn">
+                        <img src="../../public/resourse/Trash.svg" class="underIcon"/>
+                    </div>
+                </div>
+            </div>
+            <div class="" id="downloadWindow">
+                <div id="downloadFrame">
+                    <div id="dldtitle">
+                        <h1>导 出 设 置</h1>
+                        <p>选择导出选项并指定保存位置</p>
+                    </div>
+                    <div id="settings">
+                        <div class="setIconCtn">
+                            <img src="../../public/resourse/settings.svg" class="stIcon"/>
+                        </div>
+                        <h1>导出选项</h1>
+                    </div>
+                    <div class="option selected" id="posOption">
+                        <div class="dldIconCtn" id="posIconCtn">
+                            <img src="../../public/resourse/Map pin.svg" class="stIcon"/>
+                        </div>
+                        <h1>位置信息</h1>
+                        <p>照片拍摄地</p>
+                    </div>
+                    <div class="option selected" id="timeOption">
+                        <div class="dldIconCtn" id="timeIconCtn">
+                            <img src="../../public/resourse/Clock.svg" class="stIcon"/>
+                        </div>
+                        <h1>时间信息</h1>
+                        <p>照片拍摄时间</p>
+                    </div>
+                    <div class="option selected" id="msgOption">
+                        <div class="dldIconCtn" id="msgIconCtn">
+                            <img src="../../public/resourse/Message circle.svg" class="stIcon"/>
+                        </div>
+                        <h1>拍摄参数</h1>
+                        <p>相机的快门参数</p>
+                    </div>
+                    <div id="format">
+                        <div class="setIconCtn">
+                            <img src="../../public/resourse/settings.svg" class="stIcon"/>
+                        </div>
+                        <h1>导出格式</h1>
+                    </div>
+                    <div class="formatOption" id="word">word</div>
+                    <div class="formatOption selected" id="pdf">pdf</div>
+                    <div class="formatOption" id="png">png</div>
+                    <div id="choosePathBtn">选择路径</div>
+                    <textarea id="dldPath" readonly>1234523456</textarea>
+                    <div class="bottomBtn" id="returnBtn">
+                            <div class="bottomCtn" id="rtIconCtn">
+                            <img src="../../public/resourse/Corner up-left.svg" class="stIcon"/>
+                        </div>
+                        <h1>取消导出</h1>
+                    </div>
+                    <div class="bottomBtn" id="downloadBtn">
+                        <div class="bottomCtn" id="dldIconCtn">
+                            <img src="../../public/resourse/Download.svg" class="stIcon"/>
+                        </div>
+                        <h1>导出文件</h1>
+                    </div>
                 </div>
             </div>
         </div>

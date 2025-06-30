@@ -14,6 +14,7 @@ var filteredData = []
 var idToMarker
 
 var trip
+var outputPath
 
 // DOM元素
 const naviBar = document.getElementById('naviBar')
@@ -44,6 +45,21 @@ const startTime = document.getElementById('startTime')
 const endTime = document.getElementById('endTime')
 const searchBtn = document.getElementById('searchBtn')
 const refrashBtn = document.getElementById('refrashBtn')
+const cfRtnBtn = document.getElementById('cfRtnBtn')
+const cfBtn = document.getElementById('cfBtn')
+const confirmWindow = document.getElementById('confirmWindow')
+const download = document.getElementById('download')
+const downloadWindow = document.getElementById('downloadWindow')
+const posOption = document.getElementById('posOption')
+const timeOption = document.getElementById('timeOption')
+const msgOption = document.getElementById('msgOption')
+const word = document.getElementById('word')
+const pdf = document.getElementById('pdf')
+const png = document.getElementById('png')
+const choosePathBtn = document.getElementById('choosePathBtn')
+const dldPath = document.getElementById('dldPath')
+const returnBtn = document.getElementById('returnBtn')
+const downloadBtn = document.getElementById('downloadBtn')
 
 listBtn.addEventListener('click', function() {
     listContainer.classList.toggle('hidden')
@@ -57,6 +73,7 @@ editBtn.addEventListener('click', function() {
 })
 
 backBtn.addEventListener('click', function() {
+    init()
     workEdit.classList.add('hidden')
     naviBar.classList.add('default')
     midWindow.classList.add('default')
@@ -134,50 +151,55 @@ generate.addEventListener('click', async function() {
 })
 
 postPicture.addEventListener('click', async function() {
-  try {
-    let picturePath = await elt.ipcRenderer.invoke('file-open')
-    console.log(picturePath)
-    trip = (await elt.ipcRenderer.invoke('post-img', picturePath)).data
-    console.log(trip)
-    workImg.src = trip.previewPath
-    workImg.classList.remove('hidden')
+    try {
+        let picturePath = await elt.ipcRenderer.invoke('file-open')
+        if (!picturePath) {
+            return
+        }
+        console.log(picturePath)
+        trip = (await elt.ipcRenderer.invoke('post-img', picturePath)).data
+        console.log(trip)
+        workImg.src = trip.previewPath
+        workImg.classList.remove('hidden')
 
-    detailedMsg.innerHTML = `
-        经度：${trip.longitude} <br/>
-        纬度：${trip.latitude} <br/>
-        拍摄地点：${trip.location} <br/>
-        制造商：${trip.make} <br/>
-        `
+        detailedMsg.innerHTML = `
+            经度：${trip.longitude} <br/>
+            纬度：${trip.latitude} <br/>
+            拍摄地点：${trip.location} <br/>
+            制造商：${trip.make} <br/>
+            `
 
-    if (!trip.gcjLon || !trip.gcjLat) {
-        trip.gcjLon = 116.3912
-        trip.gcjLat = 39.9
-    }
+        if (!trip.gcjLon || !trip.gcjLat) {
+            trip.gcjLon = 116.3912
+            trip.gcjLat = 39.9
+        }
 
-    let icon = new AMap.Icon({
-        image: "../../public/resourse/Map pin.png",
-    });
-    
-    const marker = new AMap.Marker({
-        position: new AMap.LngLat(trip.gcjLon, trip.gcjLat),
-        icon: icon,
-        offset: new AMap.Pixel(-11, -25),
-        draggable: true,
-        cursor: 'move',
-    });
+        let icon = new AMap.Icon({
+            image: "../../public/resourse/Map pin.png",
+        });
 
-    marker.on('dragend', function(e) {
-        const position = e.target.getPosition();
-        trip.gcjLat = position.lat
-        trip.gcjLon = position.lng
-        console.log(position.lng, position.lat);
-    });
+        const marker = new AMap.Marker({
+            position: new AMap.LngLat(trip.gcjLon, trip.gcjLat),
+            icon: icon,
+            offset: new AMap.Pixel(-11, -25),
+            draggable: true,
+            cursor: 'move',
+        });
 
-    map.add(marker)
-    map.setFitView(marker)
+        marker.on('dragend', function(e) {
+            const position = e.target.getPosition();
+            trip.gcjLat = position.lat
+            trip.gcjLon = position.lng
+            console.log(position.lng, position.lat);
+        });
 
-    travelSwitch.style.pointerEvents = 'auto'
-    showMsg.classList.remove('disable')
+        map.clearMap()
+        map.add(marker)
+        map.setFitView(marker)
+        saveWork.classList.remove('disable')
+
+        travelSwitch.style.pointerEvents = 'auto'
+        showMsg.classList.remove('disable')
     } catch (err) {
         console.error('操作失败:', err)
     }
@@ -186,9 +208,30 @@ postPicture.addEventListener('click', async function() {
 saveWork.addEventListener('click', async function() {
     editWork.classList.remove('hidden')
     saveWork.classList.add('hidden')
+    download.classList.remove('disable')
     trip.content = workContent.value
     console.log(trip.content)
     if (!trip.id) {
+        if (!trip.location) {
+            await new Promise((resolve, reject) => {
+                AMap.plugin("AMap.Geocoder", function() {
+                    const geocoder = new AMap.Geocoder();
+                    geocoder.getAddress([trip.gcjLon, trip.gcjLat], function(status, result) {
+                        if (status === "complete" && result.info === "OK") {
+                            trip.location = result.regeocode.formattedAddress;
+                            console.log("获取位置成功:", trip.location);
+                            resolve();
+                        } else {
+                            console.error("地理编码失败:", result);
+                            trip.location = "未知位置";
+                            resolve();
+                        }
+                    });
+                });
+            });
+        }
+        console.log(trip.location)
+
         const travelData = {
             latitude: trip.latitude,
             longitude: trip.longitude,
@@ -200,13 +243,14 @@ saveWork.addEventListener('click', async function() {
             model: trip.model,
             type: trip.type,
             width: trip.width,
-            heigth: trip.heigth,
+            height: trip.height,
             exposureTime: trip.exposureTime,
             fnumber: trip.fnumber,
             iso: trip.iso,
             content: trip.content
         }
         const previewPath = trip.previewPath
+        console.log(travelData.location)
         const response = await elt.ipcRenderer.invoke('save-work', previewPath, travelData)
         console.log(response)
     } else {
@@ -219,11 +263,16 @@ saveWork.addEventListener('click', async function() {
 editWork.addEventListener('click', function() {
     editWork.classList.add('hidden')
     saveWork.classList.remove('hidden')
-    postPicture.classList.remove('disable')
+    saveWork.classList.remove('disable')
+    download.classList.add('disable')
     workContent.removeAttribute('readonly', true)
 })
 
-delWork.addEventListener('click', async function() {
+cfRtnBtn.addEventListener('click', function() {
+    confirmWindow.classList.remove('active')
+})
+
+cfBtn.addEventListener('click', async function() {
     if (workId) {
         const response = await elt.ipcRenderer.invoke('del-work', workId)
         console.log(response)
@@ -232,6 +281,11 @@ delWork.addEventListener('click', async function() {
         midWindow.classList.add('default')
         init()
     }
+    confirmWindow.classList.remove('active')
+})
+
+delWork.addEventListener('click', function() {
+    confirmWindow.classList.add('active')
 })
 
 travelSwitch.addEventListener('click', function() {
@@ -261,8 +315,96 @@ refrashBtn.addEventListener('click', function() {
     init()
 })
 
+download.addEventListener('click', function() {
+    downloadWindow.classList.add('active')
+        dldPath.textContent = outputPath
+})
+
+posOption.addEventListener('click', function() {
+    posOption.classList.toggle('selected')
+})
+
+timeOption.addEventListener('click', function() {
+    timeOption.classList.toggle('selected')
+})
+
+msgOption.addEventListener('click', function() {
+    msgOption.classList.toggle('selected')
+})
+
+word.addEventListener('click', function() {
+    word.classList.add('selected')
+    pdf.classList.remove('selected')
+    png.classList.remove('selected')
+})
+
+pdf.addEventListener('click', function() {
+    pdf.classList.add('selected')
+    word.classList.remove('selected')
+    png.classList.remove('selected')
+})
+
+png.addEventListener('click', function() {
+    png.classList.add('selected')
+    pdf.classList.remove('selected')
+    word.classList.remove('selected')
+})
+
+choosePathBtn.addEventListener('click', async function() {
+    const response = await elt.ipcRenderer.invoke('choose-path')
+    console.log(response)
+    if (response.canceled === false) {
+        outputPath = response.filePaths[0]
+        console.log(666)
+        dldPath.textContent = outputPath
+    }
+})
+
+returnBtn.addEventListener('click', function() {
+    downloadWindow.classList.remove('active')
+})
+
+downloadBtn.addEventListener('click', async function() {
+    downloadWindow.classList.remove('active')
+    let id, location, time, param, type, path
+
+    id = workId
+
+    if (posOption.getAttribute('class').indexOf('selected') > -1) {
+        location = true 
+    } else {
+        location = false
+    }
+
+    if (timeOption.getAttribute('class').indexOf('selected') > -1) {
+        time = true 
+    } else {
+        time = false
+    }
+
+    if (msgOption.getAttribute('class').indexOf('selected') > -1) {
+        param = true
+    } else {
+        param = false
+    }
+
+    if (word.getAttribute('class').indexOf('selected') > -1) {
+        type = 'WORD'
+    } else if (pdf.getAttribute('class').indexOf('selected') > -1) {
+        type = 'PDF'
+    } else {
+        type = 'PNG'
+    }
+
+    path = outputPath
+
+    const response = (await elt.ipcRenderer.invoke('export', id, location, time, param, type, path)).data
+    console.log(response)
+})
+
 // 初始化
 async function init() {
+    map.clearMap()
     await loadData()
     await loading()
     await renderTable()
@@ -421,6 +563,8 @@ async function renderWork(id) {
         delWork.classList.add('disable')
         travelSwitch.style.pointerEvents = 'none'
         showMsg.classList.add('disable')
+        saveWork.classList.add('disable')
+        download.classList.add('disable')
 
         /*-----------数据修改-----------*/
         workContent.value = ""
@@ -438,6 +582,7 @@ async function renderWork(id) {
         travelSwitch.style.pointerEvents = 'auto'
         showMsg.classList.remove('disable')
         map.setFitView(idToMarker.get(id))
+        download.classList.remove('disable')
 
         /*-----------数据修改-----------*/
         const response = await elt.ipcRenderer.invoke('get-msg-by-id', id)

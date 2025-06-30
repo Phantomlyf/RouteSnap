@@ -43,6 +43,7 @@
     height: 50%;
     outline: none;
     border: none;
+    font-size: 2.2vmin;
 }
 
 #searchBar #endTimeContainer {
@@ -194,6 +195,18 @@ tbody tr {
     height: 19%;
     background-color: #d9d9d9;
     margin-bottom: 1%;
+    animation: cellEntry 0.8s forwards;
+}
+
+@keyframes cellEntry {
+    0% {
+        opacity: 0.5;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 td {
@@ -267,3 +280,9 @@ tbody tr:hover {
     line-height: 6.5vmin;
     font-family: serif;
 }
+
+tr:nth-child(1) {animation-delay: 0.1s;}
+tr:nth-child(2) {animation-delay: 0.2s;}
+tr:nth-child(3) {animation-delay: 0.3s;}
+tr:nth-child(4) {animation-delay: 0.4s;}
+tr:nth-child(5) {animation-delay: 0.5s;}

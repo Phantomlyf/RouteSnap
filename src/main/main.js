@@ -1,5 +1,6 @@
 const {app, BrowserWindow, ipcMain, dialog} = require('electron')
 const path = require('path')
+const { join } = path
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 const axiosApi = require("./axiosApi")
@@ -14,6 +15,12 @@ function openFile() {
     }).catch(console.error);
 }
 
+function choosePath() {
+    return dialog.showOpenDialog({
+        properties: ['openDirectory']
+    })
+}
+
 app.on('ready', () => {
     const win = new BrowserWindow({
         width: 1280,
@@ -21,10 +28,10 @@ app.on('ready', () => {
         minWidth: 1280,
         minHeight: 720,
         autoHideMenuBar: true,
+        title: 'routesnap',
+        icon: join(__dirname, '../../public/resourse/routesnap.png'),
         webPreferences:{
             preload:path.resolve(__dirname, './preload.js'),
-
-            // webSecurity: false14
         }
     })
     win.setAspectRatio(16 / 9)
@@ -36,5 +43,7 @@ app.on('ready', () => {
     ipcMain.handle('get-id-by-time', axiosApi.getIdByTime)
     ipcMain.handle('del-work', axiosApi.delWork)
     ipcMain.handle('edit-work', axiosApi.editWork)
+    ipcMain.handle('choose-path', choosePath)
+    ipcMain.handle('export', axiosApi.downloadFile)
     win.loadFile('src/pages/index.html')
 })

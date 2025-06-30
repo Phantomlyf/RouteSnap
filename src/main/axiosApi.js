@@ -20,6 +20,7 @@ async function postImg(_, filePath) {
 
 async function saveWork(_, previewPath, travelData) {
     try {
+        console.log(travelData.location)
         const encodedPath = encodeURIComponent(previewPath.replace(/\\/g, '/'))
         const response = await axios.post(`http://localhost:4399/travel/upload2?previewPath=${encodedPath}`, travelData, {
             headers: {
@@ -77,13 +78,16 @@ async function delWork(_, id) {
 
 async function editWork(_, id, content) {
     try {
-        console.log(id, content)
-        const response = await axios.put(`${urlPath}/travel/change`, {
-            id: id,
-            content: content
-        }, {
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        })
+        const params = new URLSearchParams();
+        params.append('content', content);
+        
+        const response = await axios.put(
+            `${urlPath}/travel/change/${id}`,
+            params,
+            {
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            }
+        )
         return response.data
     } catch(e) {
         console.error(e)
@@ -91,6 +95,26 @@ async function editWork(_, id, content) {
     }
 }
 
+async function downloadFile(_, id, location, time, param, type, path) {
+    try {
+        const response = await axios.get(`${urlPath}/travel/export`, {
+            params: {
+                id: id,
+                isRetainLocation: location,
+                isRetainTime: time,
+                isRetainParams: param,
+                exportType: type,
+                exportPath: path
+            },
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        });
+        return response.data;
+    } catch(e) {
+        console.error(e);
+        return {error: e.message};
+    }
+}
+
 module.exports = {
-    postImg, saveWork, getAllId, getMsgById, getIdByTime, delWork, editWork
+    postImg, saveWork, getAllId, getMsgById, getIdByTime, delWork, editWork, downloadFile
 }

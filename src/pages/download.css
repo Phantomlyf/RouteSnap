@@ -1,0 +1,284 @@
+#downloadWindow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #00000080;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+}
+
+#downloadWindow.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#downloadFrame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 80%;
+    border-radius: 20px;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+#dldtitle {
+    position: absolute;
+    width: 100%;
+    height: 20%;
+    background-color: #d9d9d9;
+    text-align: center;
+    padding: 2%;
+    margin: auto;
+    color: #212121;
+    box-shadow: 0 0 4px 0 #21212160;
+}
+
+#dldtitle h1 {
+    font-size: 6vmin;
+}
+
+#dldtitle p {
+    font-size: 2.5vmin;
+}
+
+#settings {
+    position: absolute;
+    top: 20%;
+    width: 30%;
+    height: 10%;
+}
+
+.stIcon {
+    width: 100%;
+    height: 100%;
+}
+
+.setIconCtn {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    transform: translate(0, -50%);
+    width: 15%;
+    aspect-ratio: 1 / 1;
+}
+
+#settings h1 {
+    position: absolute;
+    top: 45%;
+    left: 30%;
+    transform: translate(0, -50%);
+    font-size: 3vmin;
+    color: #2e2e2e;
+}
+
+.option {
+    position: absolute;
+    top: 30%;
+    height: 15%;
+    width: 30%;
+    /* background-color: aqua; */
+    border-radius: 10px;
+    box-shadow: 0 0 8px 0 #00000060;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.option.selected {
+    background: #33993310;
+    border: 2px solid #33993390;
+}
+
+#posOption {
+    left: 3%;
+}
+
+#timeOption {
+    left: 35%;
+}
+
+#msgOption {
+    left: 67%;
+}
+
+.dldIconCtn {
+    position: absolute;
+    top: 48%;
+    left: 12%;
+    transform: translate(0, -50%);
+    width: 18%;
+    aspect-ratio: 1 / 1;
+    /* background-color: aqua; */
+}
+
+.option h1 {
+    position: absolute;
+    font-size: 3vmin;
+    left: 60%;
+    transform: translate(-50%);
+    top: 21%;
+    white-space: nowrap;
+    color: #212121;
+}
+
+.option p {
+    position: absolute;
+    font-size: 2vmin;
+    transform: translate(-50%);
+    left: 60%;
+    top: 55%;
+    white-space: nowrap;
+    color: #9d9d9d;
+}
+
+#format {
+    position: absolute;
+    top: 47%;
+    width: 30%;
+    height: 10%;
+}
+
+#format h1 {
+    position: absolute;
+    top: 45%;
+    left: 30%;
+    transform: translate(0, -50%);
+    font-size: 3vmin;
+    color: #2e2e2e;
+}
+
+.formatOption {
+    position: absolute;
+    top: 58%;
+    width: 15%;
+    height: 5%;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 2.5vmin;
+    line-height: 3.5vmin;
+    font-family: cursive;
+    box-shadow: 0 0 4px 0 #00000030;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.formatOption.selected {
+    background: #33993310;
+    border: 2px solid #339933;
+}
+
+#word {
+    left: 5%;
+}
+
+#pdf {
+    left: 22%;
+}
+
+#png {
+    left: 39%;
+}
+
+#choosePathBtn {
+    position: absolute;
+    top: 70%;
+    left: 10%;
+    height: 7%;
+    width: 15%;
+    background-color: #d9d9d9;
+    border-radius: 5px;
+    white-space:nowrap;
+    text-align: center;
+    font-size: 2.3vmin;
+    line-height: 5.4vmin;
+    color: #21212190;
+    font-weight: 500;
+    box-shadow: 0 0 4px 0 #d9d9d960;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+#choosePathBtn:hover {
+    box-shadow: 0 0 8px 0 #d9d9d9;
+}
+
+#dldPath {
+    position: absolute;
+    top: 70%;
+    left: 28%;
+    width: 60%;
+    height: 7%;
+    resize: none;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 4px 0 #00000030;
+    white-space: nowrap;
+    font-size: 1.8vmin;
+    line-height: 5.4vmin;
+    padding-left: 2%;
+}
+
+#dldPath::-webkit-scrollbar {
+    width: 0px;
+    height: 4px;
+}
+
+#dldPath::-webkit-scrollbar-thumb {
+    background: #212121;
+    border-radius: 2px;
+}
+
+#dldPath::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.bottomBtn {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 90%;
+    height: 10%;
+    width: 30%;
+    border-radius: 1000px;
+    box-shadow: 0 0 8px 0 #00000060;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.bottomBtn:hover {
+    height: 10.2%;
+    width: 30.5%;
+    box-shadow: 0 0 8px 0 #00000090;
+}
+
+#returnBtn {
+    left: 30%;
+    background-color: #212121;
+}
+
+#downloadBtn {
+    left: 70%;
+    background-color: #66cd66;
+}
+
+.bottomBtn h1 {
+    font-size: 2.7vmin;
+    position: absolute;
+    top: 48%;
+    left: 57%;
+    transform: translate(-50%, -50%);
+    white-space:nowrap;
+    color: #fff;
+}
+
+.bottomCtn {
+    position: absolute;
+    left: 15%;
+    top: 52%;
+    transform: translate(0, -50%);
+    width: 15%;
+    /* background-color: rebeccapurple; */
+    aspect-ratio: 1 / 1;
+}
